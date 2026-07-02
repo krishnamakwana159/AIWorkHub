@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AIWorkHub.SharedKernel.Entities;
 using AIWorkHub.SharedKernel.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AIWorkHub.Domain.Entities;
 
 namespace AIWorkHub.Persistence;
 
@@ -14,6 +15,13 @@ public sealed class AppDbContext(
     ICurrentUserService currentUserService)
     : DbContext(options)
 {
+    public DbSet<User> Users => Set<User>();
+
+    public DbSet<Role> Roles => Set<Role>();
+
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
