@@ -315,6 +315,38 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+# Node / frontend
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+.npm/
+.yarn/
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+dist/
+build/
+coverage/
+.nyc_output/
+.vite/
+.next/
+.nuxt/
+.svelte-kit/
+.turbo/
+.parcel-cache/
+.eslintcache
+*.tsbuildinfo
+
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+
 # Visual Studio 6 build log
 *.plg
 
@@ -414,6 +446,7 @@ FodyWeavers.xsd
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+!.vscode/.gitkeep
 
 # Local History for Visual Studio Code
 .history/
