@@ -1,0 +1,11 @@
+@AIWorkHub.Api_HostAddress = http://localhost:5155
+
+GET {{AIWorkHub.Api_HostAddress}}/health
+Accept: application/json
+
+###
+
+GET {{AIWorkHub.Api_HostAddress}}/api/health
+Accept: application/json
+
+###
