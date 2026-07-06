@@ -10,9 +10,7 @@ namespace AIWorkHub.Application.Features.Authentication.Login;
 public sealed class LoginCommandHandler(
     IUserRepository userRepository,
     IPasswordHasher passwordHasher,
-    IJwtTokenGenerator jwtTokenGenerator,
-    IRefreshTokenRepository refreshTokenRepository,
-    IUnitOfWork unitOfWork)
+    IAuthenticationService authenticationService)
     : IRequestHandler<LoginCommand, Result<AuthResponse>>
 {
     public async Task<Result<AuthResponse>> Handle(
@@ -42,28 +40,10 @@ public sealed class LoginCommandHandler(
             return Result<AuthResponse>.Failure("Invalid email or password.");
         }
 
-        var accessToken = jwtTokenGenerator.GenerateAccessToken(user);
-
-        var refreshTokenValue = jwtTokenGenerator.GenerateRefreshToken();
-
-        var refreshToken = new Domain.Entities.RefreshToken
-        {
-            Token = refreshTokenValue,
-            UserId = user.Id,
-            ExpiresAtUtc = DateTime.UtcNow.AddDays(7)
-        };
-
-        await refreshTokenRepository.AddAsync(
-            refreshToken,
+        var authResponse = await authenticationService.CreateAuthResponseAsync(
+            user,
             cancellationToken);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return Result<AuthResponse>.Success(new AuthResponse
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshTokenValue,
-            ExpiresAtUtc = DateTime.UtcNow.AddMinutes(30)
-        });
+        return Result<AuthResponse>.Success(authResponse);
     }
 }

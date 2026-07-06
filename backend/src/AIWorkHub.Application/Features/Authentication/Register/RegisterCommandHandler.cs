@@ -11,8 +11,7 @@ namespace AIWorkHub.Application.Features.Authentication.Register;
 public sealed class RegisterCommandHandler(IUserRepository userRepository,
     IPasswordHasher passwordHasher,
     IUnitOfWork unitOfWork,
-    IJwtTokenGenerator jwtTokenGenerator,
-    IRefreshTokenRepository refreshTokenRepository)
+    IAuthenticationService authenticationService)
     : IRequestHandler<RegisterCommand, Result<AuthResponse>>
 {
     public async Task<Result<AuthResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -35,29 +34,10 @@ public sealed class RegisterCommandHandler(IUserRepository userRepository,
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var accessToken = jwtTokenGenerator.GenerateAccessToken(user);
-
-        var refreshTokenValue = jwtTokenGenerator.GenerateRefreshToken();
-
-        var refreshToken = new Domain.Entities.RefreshToken
-        {
-            Token = refreshTokenValue,
-            UserId = user.Id,
-            ExpiresAtUtc = DateTime.UtcNow.AddDays(7)
-        };
-
-        await refreshTokenRepository.AddAsync(
-            refreshToken,
+        var authResponse = await authenticationService.CreateAuthResponseAsync(
+            user,
             cancellationToken);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return Result<AuthResponse>.Success(new AuthResponse
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshTokenValue,
-            ExpiresAtUtc = DateTime.UtcNow.AddMinutes(30)
-        });
-
+        return Result<AuthResponse>.Success(authResponse);
     }
 }

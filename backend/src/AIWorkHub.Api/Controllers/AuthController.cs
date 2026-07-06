@@ -39,4 +39,21 @@ public sealed class AuthController(IMediator mediator): ControllerBase
         return Ok(result.Value);
     }
 
+    [HttpPost("refresh-token")]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RefreshToken(
+        RefreshTokenRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new RefreshTokenCommand(request), cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return Ok(result.Value);
+    }
+
 }
