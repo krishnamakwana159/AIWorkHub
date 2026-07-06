@@ -1,9 +1,9 @@
+using AIWorkHub.SharedKernel.Entities;
+
 namespace AIWorkHub.Domain.Entities;
 
-public class RefreshToken
+public class RefreshToken : AuditableEntity
 {
-    public Guid Id { get; set; }
-
     public string Token { get; set; } = string.Empty;
 
     public DateTime ExpiresAtUtc { get; set; }

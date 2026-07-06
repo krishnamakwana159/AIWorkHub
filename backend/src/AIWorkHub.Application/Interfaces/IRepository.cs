@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using AIWorkHub.SharedKernel.Entities;
 
-namespace AIWorkHub.Persistence.Repositories;
+namespace AIWorkHub.Application.Interfaces;
 
 /// <summary>
 /// Defines read and write operations for aggregate persistence.

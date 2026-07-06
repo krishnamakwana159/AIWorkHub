@@ -24,6 +24,10 @@ app.UseApiDocumentation();
 
 app.UseSerilogRequestLogging();
 
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 app.MapApiEndpoints();
 
 app.Run();

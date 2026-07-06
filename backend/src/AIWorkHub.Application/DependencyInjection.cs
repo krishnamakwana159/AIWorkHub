@@ -1,6 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-
+using FluentValidation;
 namespace AIWorkHub.Application;
 
 public static class DependencyInjection
@@ -15,6 +15,7 @@ public static class DependencyInjection
         });
 
         services.AddAutoMapper(_ => { }, assembly);
+        services.AddValidatorsFromAssembly(assembly);
 
         return services;
     }

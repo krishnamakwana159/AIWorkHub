@@ -1,9 +1,9 @@
+using AIWorkHub.SharedKernel.Entities;
+
 namespace AIWorkHub.Domain.Entities;
 
-public class User
+public class User : AuditableEntity
 {
-    public Guid Id { get; set; }
-
     public string FirstName { get; set; } = string.Empty;
 
     public string LastName { get; set; } = string.Empty;
@@ -13,8 +13,6 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
 
     public bool IsActive { get; set; } = true;
-
-    public DateTime CreatedAtUtc { get; set; }
 
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 

@@ -60,7 +60,8 @@ public sealed class AppDbContext(
     private void ApplyAuditInformation()
     {
         var utcNow = dateTimeProvider.UtcNow;
-        var currentUserId = currentUserService.UserId;
+        //var currentUserId = currentUserService.UserId;
+        var currentUserId = currentUserService.UserId ?? "system";
 
         foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
         {

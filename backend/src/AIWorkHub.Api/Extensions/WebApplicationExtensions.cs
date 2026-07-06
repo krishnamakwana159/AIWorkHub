@@ -15,7 +15,6 @@ public static class WebApplicationExtensions
             return app;
         }
 
-        app.MapOpenApi();
         app.UseSwagger();
         app.UseSwaggerUI(options =>
         {

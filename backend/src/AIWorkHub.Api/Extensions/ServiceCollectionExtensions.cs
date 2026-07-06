@@ -1,5 +1,5 @@
 using System.Reflection;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace AIWorkHub.Api.Extensions;
 
@@ -18,9 +18,11 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configuration);
 
         services.AddControllers();
+
         services.AddProblemDetails();
+
         services.AddEndpointsApiExplorer();
-        services.AddOpenApi();
+
         services.AddHealthChecks();
 
         services.AddSwaggerGen(options =>

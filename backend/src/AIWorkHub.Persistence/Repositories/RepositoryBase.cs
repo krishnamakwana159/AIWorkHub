@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using AIWorkHub.Application.Interfaces;
 using AIWorkHub.SharedKernel.Entities;
 using Microsoft.EntityFrameworkCore;
 
