@@ -22,6 +22,10 @@ public sealed class AppDbContext(
     public DbSet<UserRole> UserRoles => Set<UserRole>();
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<Project> Projects => Set<Project>();
+    public DbSet<WorkTask> WorkTasks => Set<WorkTask>();
+    public DbSet<TaskComment> TaskComments => Set<TaskComment>();
+    public DbSet<ActivityLog> ActivityLogs => Set<ActivityLog>();
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

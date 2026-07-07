@@ -35,5 +35,19 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.CreatedAtUtc)
             .IsRequired();
+
+        builder.HasMany(x => x.UserRoles)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId);
+
+        builder.HasMany(x => x.RefreshTokens)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId);
+
+        builder.HasMany(x => x.Projects)
+            .WithOne(x => x.Owner)
+            .HasForeignKey(x => x.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

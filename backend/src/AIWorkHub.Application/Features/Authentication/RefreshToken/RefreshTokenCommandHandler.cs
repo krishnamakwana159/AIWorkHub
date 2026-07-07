@@ -1,6 +1,6 @@
 using AIWorkHub.Application.Common.Interfaces;
 using AIWorkHub.Application.Features.Authentication.DTOs;
-using AIWorkHub.Application.Interfaces;
+using AIWorkHub.Application.Interfaces.Repositories;
 using AIWorkHub.Domain.Entities;
 using AIWorkHub.SharedKernel.Interfaces;
 using AIWorkHub.SharedKernel.Results;

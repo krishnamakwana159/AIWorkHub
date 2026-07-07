@@ -1,9 +1,12 @@
 using AIWorkHub.Persistence.Repositories;
-using AIWorkHub.Application.Interfaces;
+using AIWorkHub.Application.Interfaces.Repositories;
 using AIWorkHub.SharedKernel.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using AIWorkHub.Application.Common.Interfaces;
+using AIWorkHub.Application.Interfaces;
+using AIWorkHub.Persistence.Services;
 
 namespace AIWorkHub.Persistence;
 
@@ -41,6 +44,11 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IWorkTaskRepository, WorkTaskRepository>();
+        services.AddScoped<ITaskCommentRepository, TaskCommentRepository>();
+        services.AddScoped<IActivityService, ActivityService>();
+        services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
 
         return services;
     }

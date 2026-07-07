@@ -1,6 +1,6 @@
 using AIWorkHub.Domain.Entities;
 
-namespace AIWorkHub.Application.Interfaces;
+namespace AIWorkHub.Application.Interfaces.Repositories;
 
 public interface IRefreshTokenRepository : IRepository<RefreshToken>
 {

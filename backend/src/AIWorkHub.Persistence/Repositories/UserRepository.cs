@@ -1,4 +1,5 @@
 using AIWorkHub.Application.Interfaces;
+using AIWorkHub.Application.Interfaces.Repositories;
 using AIWorkHub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

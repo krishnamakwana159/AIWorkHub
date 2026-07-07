@@ -17,4 +17,7 @@ public class User : AuditableEntity
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+    public ICollection<Project> Projects { get; set; } = new List<Project>();
+    public ICollection<WorkTask> AssignedTasks { get; set; } = new List<WorkTask>();
+    public ICollection<TaskComment> Comments { get; set; } = new List<TaskComment>();
 }
