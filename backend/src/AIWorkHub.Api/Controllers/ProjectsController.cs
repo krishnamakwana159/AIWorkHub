@@ -1,3 +1,6 @@
+using AIWorkHub.Application.Features.ProjectMembers.AddMember;
+using AIWorkHub.Application.Features.ProjectMembers.DTOs;
+using AIWorkHub.Application.Features.ProjectMembers.GetMembers;
 using AIWorkHub.Application.Features.Projects.Archive;
 using AIWorkHub.Application.Features.Projects.Create;
 using AIWorkHub.Application.Features.Projects.Delete;
@@ -119,4 +122,35 @@ public sealed class ProjectsController(IMediator mediator)
 
         return result.IsSuccess ? NoContent() : BadRequest(result.Errors);
     }
+
+    #region Project Members
+    [HttpPost("{projectId:guid}/members")]
+    public async Task<IActionResult> AddMember(
+        Guid projectId,
+        AddProjectMemberRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(
+            new AddProjectMemberCommand(projectId, request),
+            cancellationToken);
+
+        if (result.IsFailure)
+            return BadRequest(result);
+
+        return NoContent();
+    }
+
+    [HttpGet("{projectId:guid}/members")]
+    public async Task<IActionResult> GetMembers(
+        Guid projectId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(
+            new GetProjectMembersQuery(projectId),
+            cancellationToken);
+
+        return Ok(result);
+    }
+    #endregion
+
 }

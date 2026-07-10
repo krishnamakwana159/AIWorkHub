@@ -1,8 +1,10 @@
-namespace AIWorkHub.Application.Features.Tasks.DTOs;
+namespace AIWorkHub.Application.Features.Tasks.Comments.DTOs;
 
 public sealed class CommentResponse
 {
     public Guid Id { get; set; }
+
+    public Guid TaskId { get; set; }
 
     public Guid UserId { get; set; }
 

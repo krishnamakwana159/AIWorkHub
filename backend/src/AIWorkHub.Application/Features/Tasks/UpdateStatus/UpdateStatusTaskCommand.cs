@@ -6,5 +6,5 @@ namespace AIWorkHub.Application.Features.Tasks.UpdateStatus;
 
 public sealed record UpdateTaskStatusCommand(
     Guid TaskId,
-    Domain.Enums.TaskStatus Status)
+    WorkTaskStatus Status)
     : IRequest<Result>;

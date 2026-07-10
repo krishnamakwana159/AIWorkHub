@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using AIWorkHub.Application.Common.Specifications;
 using AIWorkHub.SharedKernel.Entities;
 
 namespace AIWorkHub.Application.Interfaces.Repositories;
@@ -41,4 +42,16 @@ public interface IRepository<TEntity>
     /// Removes an entity from the set.
     /// </summary>
     void Remove(TEntity entity);
+
+    Task<IReadOnlyList<TEntity>> ListAsync(
+        ISpecification<TEntity> specification,
+        CancellationToken cancellationToken);
+
+    Task<TEntity?> FirstOrDefaultAsync(
+        ISpecification<TEntity> specification,
+        CancellationToken cancellationToken);
+
+    Task<int> CountAsync(
+        ISpecification<TEntity> specification,
+        CancellationToken cancellationToken);
 }

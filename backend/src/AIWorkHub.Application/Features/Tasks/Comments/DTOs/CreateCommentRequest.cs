@@ -1,4 +1,4 @@
-namespace AIWorkHub.Application.Features.Tasks.DTOs;
+namespace AIWorkHub.Application.Features.Tasks.Comments.DTOs;
 
 public sealed class CreateCommentRequest
 {

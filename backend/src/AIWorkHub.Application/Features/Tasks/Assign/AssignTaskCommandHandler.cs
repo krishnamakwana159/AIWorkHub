@@ -11,6 +11,7 @@ public sealed class AssignTaskCommandHandler(
     IWorkTaskRepository taskRepository,
     IUserRepository userRepository,
     IActivityService activityService,
+    INotificationService notificationService,
     IUnitOfWork unitOfWork)
     : IRequestHandler<AssignTaskCommand, Result>
 {
@@ -35,6 +36,14 @@ public sealed class AssignTaskCommandHandler(
         task.AssignedUserId = request.UserId;
 
         taskRepository.Update(task);
+
+        await notificationService.NotifyAsync(
+            user.Id,
+            "Task Assigned",
+            $"You have been assigned '{task.Title}'.",
+            NotificationType.TaskAssigned,
+            $"/tasks/{task.Id}",
+            cancellationToken);
 
         await activityService.LogAsync(
             ActivityEntityType.Task,

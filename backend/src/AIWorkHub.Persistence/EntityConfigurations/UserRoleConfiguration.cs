@@ -2,7 +2,7 @@ using AIWorkHub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AIWorkHub.Persistence.Configurations;
+namespace AIWorkHub.Persistence.EntityConfigurations;
 
 public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
 {

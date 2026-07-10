@@ -30,6 +30,9 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IPasswordHasher, PasswordHasherService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+        services.AddScoped<IFileStorageService, LocalFileStorageService>();
+        services.AddScoped<INotificationService, NotificationService>();
+
         services.Configure<JwtSettings>(
             configuration.GetSection(JwtSettings.SectionName));
 

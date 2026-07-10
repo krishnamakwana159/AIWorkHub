@@ -11,6 +11,8 @@ namespace AIWorkHub.Application.Features.Tasks.UpdateTask;
 public sealed class UpdateTaskCommandHandler(
     IWorkTaskRepository repository,
     IActivityService activityService,
+    ICurrentUserService currentUserService,
+    INotificationService notificationService,
     IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateTaskCommand, Result<TaskResponse>>
 {
@@ -18,6 +20,11 @@ public sealed class UpdateTaskCommandHandler(
         UpdateTaskCommand request,
         CancellationToken cancellationToken)
     {
+        if (!Guid.TryParse(currentUserService.UserId, out var currentUserId))
+        {
+            return Result<TaskResponse>.Failure("User not found.");
+        }
+
         var task = await repository.GetByIdAsync(
             request.Id,
             cancellationToken);
@@ -34,7 +41,7 @@ public sealed class UpdateTaskCommandHandler(
         task.EstimatedHours = request.Request.EstimatedHours;
         task.ActualHours = request.Request.ActualHours;
 
-        if (task.Status == Domain.Enums.TaskStatus.Completed)
+        if (task.Status == WorkTaskStatus.Completed)
             task.CompletedAtUtc = DateTime.UtcNow;
         else
             task.CompletedAtUtc = null;
@@ -47,6 +54,17 @@ public sealed class UpdateTaskCommandHandler(
             ActivityAction.StatusChanged,
             $"Status changed to {task.Status}.",
             cancellationToken);
+
+        if (task.CreatedBy != currentUserService.UserId)
+        {
+            await notificationService.NotifyAsync(
+                currentUserId,
+                "Task Status Updated",
+                $"Task '{task.Title}' is now {task.Status}.",
+                NotificationType.TaskUpdated,
+                $"/tasks/{task.Id}",
+                cancellationToken);
+        }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

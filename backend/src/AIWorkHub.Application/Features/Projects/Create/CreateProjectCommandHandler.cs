@@ -1,7 +1,9 @@
 using AIWorkHub.Application.Common.Interfaces;
 using AIWorkHub.Application.Features.Projects.DTOs;
 using AIWorkHub.Application.Interfaces;
+using AIWorkHub.Application.Interfaces.Repositories;
 using AIWorkHub.Domain.Entities;
+using AIWorkHub.Domain.Enums;
 using AIWorkHub.SharedKernel.Interfaces;
 using AIWorkHub.SharedKernel.Results;
 using MediatR;
@@ -12,6 +14,8 @@ public sealed class CreateProjectCommandHandler(
     IProjectRepository projectRepository,
     ICurrentUserService currentUserService,
     IActivityService activityService,
+    INotificationService notificationService,
+    IProjectMemberRepository projectMemberRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<CreateProjectCommand, Result<ProjectResponse>>
 {
@@ -40,7 +44,7 @@ public sealed class CreateProjectCommandHandler(
 
             Priority = request.Request.Priority,
 
-            Status = Domain.Enums.ProjectStatus.NotStarted,
+            Status = ProjectStatus.NotStarted,
 
             Progress = 0,
 
@@ -57,14 +61,33 @@ public sealed class CreateProjectCommandHandler(
 
         await projectRepository.AddAsync(project, cancellationToken);
 
-        await activityService.LogAsync(
-            Domain.Enums.ActivityEntityType.Project,
-            project.Id,
-            Domain.Enums.ActivityAction.Created,
-            $"Project '{project.Name}' created.",
+        var ownerMember = new ProjectMember
+        {
+            Project = project,
+            UserId = project.OwnerId,
+            Role = ProjectRole.Owner
+        };
+
+        await projectMemberRepository.AddAsync(
+            ownerMember,
             cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await notificationService.NotifyAsync(
+            ownerId,
+            "Project Created",
+            $"Project '{project.Name}' has been created.",
+            NotificationType.ProjectCreated,
+            $"/projects/{project.Id}",
+            cancellationToken);
+
+        await activityService.LogAsync(
+            ActivityEntityType.Project,
+            project.Id,
+            ActivityAction.Created,
+            $"Project '{project.Name}' created.",
+            cancellationToken);
 
         return Result<ProjectResponse>.Success(
             new ProjectResponse

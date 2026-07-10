@@ -38,7 +38,7 @@ public sealed class CreateTaskCommandHandler(
             Title = request.Request.Title,
             Description = request.Request.Description,
             Priority = request.Request.Priority,
-            Status = Domain.Enums.TaskStatus.Todo,
+            Status = WorkTaskStatus.Todo,
             StartDateUtc = request.Request.StartDateUtc,
             DueDateUtc = request.Request.DueDateUtc,
             EstimatedHours = request.Request.EstimatedHours

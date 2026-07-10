@@ -1,3 +1,4 @@
+using AIWorkHub.Application.Features.Tasks.Comments.DTOs;
 using AIWorkHub.Application.Interfaces;
 using AIWorkHub.Application.Interfaces.Repositories;
 using AIWorkHub.Domain.Enums;
@@ -9,6 +10,8 @@ namespace AIWorkHub.Application.Features.Tasks.UpdateStatus;
 
 public sealed class UpdateTaskStatusCommandHandler(
     IWorkTaskRepository taskRepository,
+    INotificationService notificationService,
+    ICurrentUserService currentUserService,
     IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateTaskStatusCommand, Result>
 {
@@ -16,6 +19,11 @@ public sealed class UpdateTaskStatusCommandHandler(
         UpdateTaskStatusCommand request,
         CancellationToken cancellationToken)
     {
+        if (!Guid.TryParse(currentUserService.UserId, out var currentUserId))
+        {
+            return Result<CommentResponse>.Failure("User not found.");
+        }
+
         var task = await taskRepository.GetByIdAsync(
             request.TaskId,
             cancellationToken);
@@ -28,7 +36,7 @@ public sealed class UpdateTaskStatusCommandHandler(
 
         task.Status = request.Status;
 
-        if (request.Status == Domain.Enums.TaskStatus.Completed)
+        if (request.Status == WorkTaskStatus.Completed)
         {
             task.CompletedAtUtc = DateTime.UtcNow;
         }
@@ -40,6 +48,14 @@ public sealed class UpdateTaskStatusCommandHandler(
         taskRepository.Update(task);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await notificationService.NotifyAsync(
+            currentUserId,
+            "Task Status Updated",
+            $"Task '{task.Title}' is now {task.Status}.",
+            NotificationType.TaskUpdated,
+            $"/tasks/{task.Id}",
+            cancellationToken);
 
         return Result.Success();
     }

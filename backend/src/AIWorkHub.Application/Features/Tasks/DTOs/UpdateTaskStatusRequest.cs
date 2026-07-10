@@ -4,5 +4,5 @@ namespace AIWorkHub.Application.Features.Tasks.DTOs;
 
 public sealed class UpdateTaskStatusRequest
 {
-    public Domain.Enums.TaskStatus Status { get; set; }
+    public WorkTaskStatus Status { get; set; }
 }

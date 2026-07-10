@@ -1,6 +1,6 @@
 using AIWorkHub.Domain.Enums;
 using AIWorkHub.SharedKernel.Entities;
-using TaskStatus = AIWorkHub.Domain.Enums.TaskStatus;
+using TaskStatus = AIWorkHub.Domain.Enums;
 
 namespace AIWorkHub.Domain.Entities;
 public sealed class WorkTask : SoftDeleteEntity
@@ -9,7 +9,7 @@ public sealed class WorkTask : SoftDeleteEntity
 
     public string? Description { get; set; }
 
-    public TaskStatus Status { get; set; } = TaskStatus.Todo;
+    public WorkTaskStatus Status { get; set; } = WorkTaskStatus.Todo;
 
     public TaskPriority Priority { get; set; } = TaskPriority.Medium;
 
@@ -37,4 +37,5 @@ public sealed class WorkTask : SoftDeleteEntity
 
     public User? AssignedUser { get; set; }
     public ICollection<TaskComment> Comments { get; set; } = new List<TaskComment>();
+    public ICollection<TaskAttachment> Attachments { get; set; } = new List<TaskAttachment>();
 }

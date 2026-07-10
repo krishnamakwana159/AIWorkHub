@@ -49,6 +49,10 @@ public static class DependencyInjection
         services.AddScoped<ITaskCommentRepository, TaskCommentRepository>();
         services.AddScoped<IActivityService, ActivityService>();
         services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
+        services.AddScoped<ITaskAttachmentRepository, TaskAttachmentRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
+        services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
 
         return services;
     }

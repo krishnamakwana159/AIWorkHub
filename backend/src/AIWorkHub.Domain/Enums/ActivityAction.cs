@@ -12,6 +12,8 @@ public enum ActivityAction
     CommentDeleted,
     AttachmentAdded,
     AttachmentRemoved,
+    AttachmentUploaded,
+    AttachmentDeleted,
     Login,
     Logout
 }

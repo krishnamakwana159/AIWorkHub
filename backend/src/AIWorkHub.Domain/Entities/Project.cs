@@ -32,4 +32,6 @@ public sealed class Project : SoftDeleteEntity
     public User Owner { get; set; } = null!;
 
     public ICollection<WorkTask> Tasks { get; set; } = new List<WorkTask>();
+    public ICollection<ProjectMember> Members { get; set; } = new List<ProjectMember>();
+
 }

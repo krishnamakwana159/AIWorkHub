@@ -1,5 +1,5 @@
 using AIWorkHub.Domain.Enums;
-using TaskStatus = AIWorkHub.Domain.Enums.TaskStatus;
+using TaskStatus = AIWorkHub.Domain.Enums;
 
 namespace AIWorkHub.Application.Features.Tasks.DTOs;
 
@@ -11,7 +11,7 @@ public sealed class UpdateTaskRequest
 
     public TaskPriority Priority { get; set; }
 
-    public TaskStatus Status { get; set; }
+    public WorkTaskStatus Status { get; set; }
 
     public DateTime? StartDateUtc { get; set; }
 

@@ -1,6 +1,6 @@
 namespace AIWorkHub.Domain.Enums;
 
-public enum TaskStatus
+public enum WorkTaskStatus
 {
     Todo = 1,
     InProgress = 2,

@@ -20,4 +20,6 @@ public class User : AuditableEntity
     public ICollection<Project> Projects { get; set; } = new List<Project>();
     public ICollection<WorkTask> AssignedTasks { get; set; } = new List<WorkTask>();
     public ICollection<TaskComment> Comments { get; set; } = new List<TaskComment>();
+    public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+    public ICollection<ProjectMember> ProjectMemberships { get; set; } = new List<ProjectMember>();
 }

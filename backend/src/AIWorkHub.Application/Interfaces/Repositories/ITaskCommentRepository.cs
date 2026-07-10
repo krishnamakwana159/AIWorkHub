@@ -11,4 +11,8 @@ public interface ITaskCommentRepository : IRepository<TaskComment>
     Task<bool> CommentExistsAsync(
         Guid commentId,
         CancellationToken cancellationToken);
+
+    Task<TaskComment?> GetByIdWithUserAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 }

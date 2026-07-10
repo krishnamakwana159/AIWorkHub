@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
+using AIWorkHub.Application.Common.Specifications;
 using AIWorkHub.Application.Interfaces;
 using AIWorkHub.Application.Interfaces.Repositories;
+using AIWorkHub.Persistence.Specifications.Base;
 using AIWorkHub.SharedKernel.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,5 +60,37 @@ public abstract class RepositoryBase<TEntity>(AppDbContext dbContext) : IReposit
     public void Remove(TEntity entity)
     {
         DbSet.Remove(entity);
+    }
+
+    public async Task<IReadOnlyList<TEntity>> ListAsync(
+        ISpecification<TEntity> specification,
+        CancellationToken cancellationToken)
+    {
+        var query = SpecificationEvaluator.GetQuery(
+            DbSet.AsQueryable(),
+            specification);
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<TEntity?> FirstOrDefaultAsync(
+        ISpecification<TEntity> specification,
+        CancellationToken cancellationToken)
+    {
+        var query = SpecificationEvaluator.GetQuery(
+            DbSet.AsQueryable(),
+            specification);
+
+        return await query.FirstOrDefaultAsync(cancellationToken);
+    }
+    public async Task<int> CountAsync(
+        ISpecification<TEntity> specification,
+        CancellationToken cancellationToken)
+    {
+        var query = SpecificationEvaluator.GetQuery(
+            DbSet.AsQueryable(),
+            specification);
+
+        return await query.CountAsync(cancellationToken);
     }
 }

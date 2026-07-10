@@ -26,4 +26,15 @@ public sealed class TaskCommentRepository(AppDbContext dbContext)
             x => x.Id == commentId,
             cancellationToken);
     }
+
+    public async Task<TaskComment?> GetByIdWithUserAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
+    }
 }
