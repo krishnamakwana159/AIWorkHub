@@ -7,4 +7,5 @@ public interface IDashboardRepository
     Task<DashboardResponse> GetDashboardAsync(
         Guid userId,
         CancellationToken cancellationToken);
+
 }

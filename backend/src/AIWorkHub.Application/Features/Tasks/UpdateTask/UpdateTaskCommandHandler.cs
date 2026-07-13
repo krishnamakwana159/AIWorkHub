@@ -4,6 +4,7 @@ using AIWorkHub.Application.Interfaces.Repositories;
 using AIWorkHub.Domain.Enums;
 using AIWorkHub.SharedKernel.Interfaces;
 using AIWorkHub.SharedKernel.Results;
+using AutoMapper;
 using MediatR;
 
 namespace AIWorkHub.Application.Features.Tasks.UpdateTask;
@@ -13,7 +14,9 @@ public sealed class UpdateTaskCommandHandler(
     IActivityService activityService,
     ICurrentUserService currentUserService,
     INotificationService notificationService,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IRealtimeService realtimeService,
+    IMapper mapper)
     : IRequestHandler<UpdateTaskCommand, Result<TaskResponse>>
 {
     public async Task<Result<TaskResponse>> Handle(
@@ -68,22 +71,19 @@ public sealed class UpdateTaskCommandHandler(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result<TaskResponse>.Success(new TaskResponse
-        {
-            Id = task.Id,
-            ProjectId = task.ProjectId,
-            Title = task.Title,
-            Description = task.Description,
-            Priority = task.Priority,
-            Status = task.Status,
-            EstimatedHours = task.EstimatedHours,
-            ActualHours = task.ActualHours,
-            StartDateUtc = task.StartDateUtc,
-            DueDateUtc = task.DueDateUtc,
-            CompletedAtUtc = task.CompletedAtUtc,
-            IsFavorite = task.IsFavorite,
-            IsPinned = task.IsPinned,
-            Order = task.Order
-        });
+        await realtimeService.SendToProjectAsync(
+            task.ProjectId,
+            "TaskUpdated",
+            new
+            {
+                task.Id,
+                task.Title,
+                task.Status
+            },
+            cancellationToken);
+
+        return Result<TaskResponse>.Success(
+            mapper.Map<TaskResponse>(task));
+
     }
 }

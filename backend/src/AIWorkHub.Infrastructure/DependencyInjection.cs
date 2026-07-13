@@ -32,6 +32,7 @@ public static class DependencyInjection
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IRealtimeService, SignalRRealtimeService>();
 
         services.Configure<JwtSettings>(
             configuration.GetSection(JwtSettings.SectionName));

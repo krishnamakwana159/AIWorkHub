@@ -73,4 +73,23 @@ public sealed class ProjectRepository(AppDbContext context)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<Project?> GetProjectWithTasksAsync(
+        Guid projectId,
+        CancellationToken cancellationToken)
+    {
+        return await context.Projects
+            .Include(x => x.Tasks)
+            .FirstOrDefaultAsync(
+                x => x.Id == projectId,
+                cancellationToken);
+    }
+
+    public async Task<List<Project>> GetAllProjectsAsync(
+        CancellationToken cancellationToken)
+    {
+        return await context.Projects
+            .Include(x => x.Tasks)
+            .ToListAsync(cancellationToken);
+    }
 }

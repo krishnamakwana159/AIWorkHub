@@ -1,3 +1,4 @@
+using AIWorkHub.Application.Features.Kanban.DTOs;
 using AIWorkHub.Application.Features.Tasks.Attachments.DTOs;
 using AIWorkHub.Application.Features.Tasks.Comments.DTOs;
 using AIWorkHub.Application.Features.Tasks.DTOs;
@@ -28,5 +29,13 @@ public sealed class TaskProfile : Profile
             .ForMember(
                 d => d.UploadedAtUtc,
                 opt => opt.MapFrom(x => x.CreatedAtUtc));
+
+        CreateMap<WorkTask, KanbanTaskDto>()
+            .ForMember(
+                d => d.AssignedUserName,
+                o => o.MapFrom(s =>
+                    s.AssignedUser == null
+                        ? null
+                        : $"{s.AssignedUser.FirstName} {s.AssignedUser.LastName}"));
     }
 }

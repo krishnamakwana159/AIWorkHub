@@ -29,6 +29,7 @@ public sealed class AppDbContext(
     public DbSet<TaskAttachment> TaskAttachments => Set<TaskAttachment>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();
+    public DbSet<WorkTimeEntry> WorkTimeEntries => Set<WorkTimeEntry>();
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -10,4 +10,11 @@ public interface IUserRepository : IRepository<User>
     Task<bool> ExistsByEmailAsync(
         string email,
         CancellationToken cancellationToken = default);
+
+    Task<User?> GetUserWithTasksAsync(
+        Guid userId,
+        CancellationToken cancellationToken);
+
+    Task<List<User>> GetAllUsersWithTasksAsync(
+        CancellationToken cancellationToken);
 }

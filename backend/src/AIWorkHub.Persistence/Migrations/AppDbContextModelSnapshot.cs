@@ -530,6 +530,65 @@ namespace AIWorkHub.Persistence.Migrations
                     b.ToTable("WorkTasks", (string)null);
                 });
 
+            modelBuilder.Entity("AIWorkHub.Domain.Entities.WorkTimeEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("DeletedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("EndTimeUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Hours")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRunning")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LastModifiedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartTimeUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkTaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WorkTaskId");
+
+                    b.ToTable("WorkTimeEntries", (string)null);
+                });
+
             modelBuilder.Entity("AIWorkHub.Domain.Entities.ActivityLog", b =>
                 {
                     b.HasOne("AIWorkHub.Domain.Entities.User", "User")
@@ -671,6 +730,25 @@ namespace AIWorkHub.Persistence.Migrations
                     b.Navigation("Project");
                 });
 
+            modelBuilder.Entity("AIWorkHub.Domain.Entities.WorkTimeEntry", b =>
+                {
+                    b.HasOne("AIWorkHub.Domain.Entities.User", "User")
+                        .WithMany("TimeEntries")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AIWorkHub.Domain.Entities.WorkTask", "WorkTask")
+                        .WithMany("TimeEntries")
+                        .HasForeignKey("WorkTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkTask");
+                });
+
             modelBuilder.Entity("AIWorkHub.Domain.Entities.Project", b =>
                 {
                     b.Navigation("Members");
@@ -697,6 +775,8 @@ namespace AIWorkHub.Persistence.Migrations
 
                     b.Navigation("RefreshTokens");
 
+                    b.Navigation("TimeEntries");
+
                     b.Navigation("UserRoles");
                 });
 
@@ -705,6 +785,8 @@ namespace AIWorkHub.Persistence.Migrations
                     b.Navigation("Attachments");
 
                     b.Navigation("Comments");
+
+                    b.Navigation("TimeEntries");
                 });
 #pragma warning restore 612, 618
         }

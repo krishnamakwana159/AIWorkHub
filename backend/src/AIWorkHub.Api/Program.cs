@@ -4,13 +4,14 @@ using AIWorkHub.Application;
 using AIWorkHub.Infrastructure;
 using AIWorkHub.Persistence;
 using Serilog;
+using AIWorkHub.Infrastructure.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.AddSerilogLogging();
 
 builder.Services.AddApiServices(builder.Configuration);
-
+builder.Services.AddSignalR();
 builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration)
@@ -29,6 +30,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapApiEndpoints();
+
+app.MapHub<NotificationHub>("/hubs/notifications");
+
+app.MapHub<KanbanHub>("/hubs/kanban");
 
 app.Run();
 

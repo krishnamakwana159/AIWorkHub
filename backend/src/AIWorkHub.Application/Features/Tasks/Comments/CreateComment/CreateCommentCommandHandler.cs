@@ -17,6 +17,7 @@ public sealed class CreateCommentCommandHandler(
     IActivityService activityService,
     IUnitOfWork unitOfWork,
     INotificationService notificationService,
+    IRealtimeService realtimeService,
     IMapper mapper)
     : IRequestHandler<CreateCommentCommand, Result<CommentResponse>>
 {
@@ -52,6 +53,17 @@ public sealed class CreateCommentCommandHandler(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
+        await realtimeService.SendToProjectAsync(
+            task.ProjectId,
+            "CommentCreated",
+            new
+            {
+                comment.Id,
+                comment.TaskId,
+                comment.Comment,
+                comment.CreatedAtUtc
+            },
+            cancellationToken);
         var savedComment = await commentRepository.GetByIdWithUserAsync(
             comment.Id,
             cancellationToken);

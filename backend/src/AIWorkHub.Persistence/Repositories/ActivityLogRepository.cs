@@ -17,4 +17,14 @@ public sealed class ActivityLogRepository(AppDbContext dbContext)
             .OrderByDescending(x => x.CreatedAtUtc)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<List<ActivityLog>> GetRecentAsync(
+        int count,
+        CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+    }
 }

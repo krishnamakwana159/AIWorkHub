@@ -8,7 +8,8 @@ namespace AIWorkHub.Infrastructure.Services;
 
 public sealed class NotificationService(
     INotificationRepository repository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IRealtimeService realtimeService)
     : INotificationService
 {
     public async Task NotifyAsync(
@@ -29,8 +30,24 @@ public sealed class NotificationService(
             IsRead = false
         };
 
-        await repository.AddAsync(notification, cancellationToken);
+        await repository.AddAsync(
+            notification,
+            cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await realtimeService.SendToUserAsync(
+            userId,
+            "NotificationCreated",
+            new
+            {
+                notification.Id,
+                notification.Title,
+                notification.Message,
+                notification.Type,
+                notification.NavigationUrl,
+                notification.CreatedAtUtc
+            },
+            cancellationToken);
     }
 }

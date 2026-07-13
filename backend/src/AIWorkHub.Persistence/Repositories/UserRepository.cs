@@ -25,4 +25,23 @@ public sealed class UserRepository(AppDbContext dbContext)
             x => x.Email == email,
             cancellationToken);
     }
+
+    public async Task<User?> GetUserWithTasksAsync(
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .Include(x => x.AssignedTasks)
+            .FirstOrDefaultAsync(
+                x => x.Id == userId,
+                cancellationToken);
+    }
+
+    public async Task<List<User>> GetAllUsersWithTasksAsync(
+        CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .Include(x => x.AssignedTasks)
+            .ToListAsync(cancellationToken);
+    }
 }

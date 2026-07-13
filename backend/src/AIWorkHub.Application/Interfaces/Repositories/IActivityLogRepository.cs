@@ -7,4 +7,8 @@ public interface IActivityLogRepository : IRepository<ActivityLog>
     Task<IReadOnlyList<ActivityLog>> GetEntityActivitiesAsync(
         Guid entityId,
         CancellationToken cancellationToken = default);
+
+    Task<List<ActivityLog>> GetRecentAsync(
+        int count,
+        CancellationToken cancellationToken);
 }

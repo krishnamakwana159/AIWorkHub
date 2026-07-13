@@ -53,6 +53,7 @@ public static class DependencyInjection
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
+        services.AddScoped<IWorkTimeEntryRepository, WorkTimeEntryRepository>();
 
         return services;
     }

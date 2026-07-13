@@ -30,4 +30,11 @@ public interface IProjectRepository : IRepository<Project>
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
+
+    Task<Project?> GetProjectWithTasksAsync(
+        Guid projectId,
+        CancellationToken cancellationToken);
+
+    Task<List<Project>> GetAllProjectsAsync(
+        CancellationToken cancellationToken);
 }

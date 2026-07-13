@@ -16,6 +16,7 @@ public sealed class CreateTaskCommandHandler(
     IProjectRepository projectRepository,
     IUnitOfWork unitOfWork,
     IActivityService activityService,
+    IRealtimeService realtimeService,
     IMapper mapper)
     : IRequestHandler<CreateTaskCommand, Result<TaskResponse>>
 {
@@ -52,26 +53,23 @@ public sealed class CreateTaskCommandHandler(
             ActivityAction.Created,
             $"Task '{entity.Title}' created.",
             cancellationToken);
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await realtimeService.SendToProjectAsync(
+            entity.ProjectId,
+            "TaskCreated",
+            new
+            {
+                entity.Id,
+                entity.Title,
+                entity.Status,
+                entity.Priority
+            },
+            cancellationToken);
 
         return Result<TaskResponse>.Success(
             mapper.Map<TaskResponse>(entity));
-        // return Result<TaskResponse>.Success(new TaskResponse
-        // {
-        //     Id = entity.Id,
-        //     ProjectId = entity.ProjectId,
-        //     Title = entity.Title,
-        //     Description = entity.Description,
-        //     Priority = entity.Priority,
-        //     Status = entity.Status,
-        //     EstimatedHours = entity.EstimatedHours,
-        //     ActualHours = entity.ActualHours,
-        //     StartDateUtc = entity.StartDateUtc,
-        //     DueDateUtc = entity.DueDateUtc,
-        //     CompletedAtUtc = entity.CompletedAtUtc,
-        //     IsFavorite = entity.IsFavorite,
-        //     IsPinned = entity.IsPinned,
-        //     Order = entity.Order
-        // });
+
     }
 }

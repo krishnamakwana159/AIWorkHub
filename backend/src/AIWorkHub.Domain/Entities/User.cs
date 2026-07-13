@@ -22,4 +22,5 @@ public class User : AuditableEntity
     public ICollection<TaskComment> Comments { get; set; } = new List<TaskComment>();
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     public ICollection<ProjectMember> ProjectMemberships { get; set; } = new List<ProjectMember>();
+    public ICollection<WorkTimeEntry> TimeEntries { get; set; } = new List<WorkTimeEntry>();
 }
