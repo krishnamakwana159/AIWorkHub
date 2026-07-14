@@ -17,4 +17,19 @@ public sealed class RefreshTokenRepository(AppDbContext context)
                 x => x.Token == token,
                 cancellationToken);
     }
+
+    public async Task<List<RefreshToken>> GetExpiredTokensAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await context.RefreshTokens
+            .Where(x =>
+                x.IsRevoked ||
+                x.ExpiresAtUtc < DateTime.UtcNow.AddDays(-7))
+            .ToListAsync(cancellationToken);
+    }
+
+    public void RemoveToken(RefreshToken token)
+    {
+        context.RefreshTokens.Remove(token);
+    }
 }

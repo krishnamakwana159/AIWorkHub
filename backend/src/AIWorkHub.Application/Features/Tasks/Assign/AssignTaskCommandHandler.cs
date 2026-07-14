@@ -12,7 +12,8 @@ public sealed class AssignTaskCommandHandler(
     IUserRepository userRepository,
     IActivityService activityService,
     INotificationService notificationService,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IEmailService emailService)
     : IRequestHandler<AssignTaskCommand, Result>
 {
     public async Task<Result> Handle(
@@ -45,6 +46,24 @@ public sealed class AssignTaskCommandHandler(
             $"/tasks/{task.Id}",
             cancellationToken);
 
+        await emailService.SendAsync(
+            user.Email,
+            "New Task Assigned",
+            $"""
+            <h2>Hello {user.FirstName}</h2>
+
+            <p>You have been assigned a new task.</p>
+
+            <p><strong>{task.Title}</strong></p>
+
+            <p>Due:
+            {task.DueDateUtc:dd MMM yyyy}</p>
+
+            <p>Priority:
+            {task.Priority}</p>
+            """,
+            cancellationToken);
+            
         await activityService.LogAsync(
             ActivityEntityType.Task,
             task.Id,

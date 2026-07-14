@@ -12,7 +12,8 @@ public sealed class UpdateTaskStatusCommandHandler(
     IWorkTaskRepository taskRepository,
     INotificationService notificationService,
     ICurrentUserService currentUserService,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IEmailService emailService)
     : IRequestHandler<UpdateTaskStatusCommand, Result>
 {
     public async Task<Result> Handle(
@@ -48,7 +49,19 @@ public sealed class UpdateTaskStatusCommandHandler(
         taskRepository.Update(task);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
-
+        if(task.Status == WorkTaskStatus.Completed)
+        {
+            await emailService.SendAsync(
+                task.AssignedUser.Email,
+                "Task Completed",
+                $"""
+                Task
+                <strong>{task.Title}</strong>
+                has been completed.
+                """,
+                cancellationToken);
+        }
+       
         await notificationService.NotifyAsync(
             currentUserId,
             "Task Status Updated",

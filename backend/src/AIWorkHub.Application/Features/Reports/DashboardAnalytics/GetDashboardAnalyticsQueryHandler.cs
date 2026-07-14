@@ -111,7 +111,7 @@ public sealed class GetDashboardAnalyticsQueryHandler(
                 TasksCompleted =
                     group.Count(x => x.Status == WorkTaskStatus.Completed),
 
-               HoursLogged = entries
+                HoursLogged = entries
                     .Where(e =>
                         e.StartTimeUtc.Year == group.Key.Year &&
                         e.StartTimeUtc.Month == group.Key.Month)

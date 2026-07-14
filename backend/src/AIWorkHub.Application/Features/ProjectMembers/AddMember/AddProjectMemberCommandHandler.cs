@@ -14,7 +14,8 @@ public sealed class AddProjectMemberCommandHandler(
     IUserRepository userRepository,
     IProjectMemberRepository memberRepository,
     INotificationService notificationService,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IEmailService emailService)
     : IRequestHandler<AddProjectMemberCommand, Result>
 {
     public async Task<Result> Handle(
@@ -60,6 +61,24 @@ public sealed class AddProjectMemberCommandHandler(
             $"You were added to '{project.Name}'.",
             NotificationType.Info,
             $"/projects/{project.Id}",
+            cancellationToken);
+
+        await emailService.SendAsync(
+            user.Email,
+            "You've been added to a project",
+            $"""
+            <h2>Hello {user.FirstName},</h2>
+
+            <p>You have been added to the project:</p>
+
+            <h3>{project.Name}</h3>
+
+            <p>Role: <strong>{request.Request.Role}</strong></p>
+
+            <br/>
+
+            <p>Regards,<br/>AIWorkHub</p>
+            """,
             cancellationToken);
 
         return Result.Success();

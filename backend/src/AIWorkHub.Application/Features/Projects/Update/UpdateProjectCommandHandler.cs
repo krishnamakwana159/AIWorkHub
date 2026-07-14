@@ -11,7 +11,8 @@ public sealed class UpdateProjectCommandHandler(
     IProjectRepository repository,
     ICurrentUserService currentUser,
     INotificationService notificationService,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IEmailService emailService)
     : IRequestHandler<UpdateProjectCommand, Result>
 {
     public async Task<Result> Handle(
@@ -49,6 +50,23 @@ public sealed class UpdateProjectCommandHandler(
             NotificationType.ProjectUpdated,
             $"/projects/{project.Id}",
             cancellationToken);
+
+        if (project.Status == ProjectStatus.Completed)
+        {
+            await emailService.SendAsync(
+                project.Owner.Email,
+                "Project Completed",
+                $"""
+                Congratulations!
+
+                Project
+
+                <strong>{project.Name}</strong>
+
+                has been completed successfully.
+                """,
+                cancellationToken);
+        }
 
         return Result.Success();
     }

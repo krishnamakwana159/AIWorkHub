@@ -5,6 +5,8 @@ using AIWorkHub.Infrastructure;
 using AIWorkHub.Persistence;
 using Serilog;
 using AIWorkHub.Infrastructure.Hubs;
+using Hangfire;
+using AIWorkHub.Infrastructure.BackgroundJobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,14 @@ builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddPersistence(builder.Configuration);
 
+builder.Services.AddHangfire(configuration =>
+{
+    configuration.UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
@@ -28,6 +38,23 @@ app.UseSerilogRequestLogging();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<ReminderJob>(
+    "daily-reminders",
+    job => job.SendDailyRemindersAsync(CancellationToken.None),
+    Cron.Daily);
+
+RecurringJob.AddOrUpdate<WeeklySummaryJob>(
+    "weekly-summary",
+    job => job.SendWeeklySummaryAsync(CancellationToken.None),
+    Cron.Weekly);
+
+RecurringJob.AddOrUpdate<CleanupJob>(
+    "cleanup-refresh-tokens",
+    job => job.CleanupAsync(CancellationToken.None),
+    Cron.Daily);
 
 app.MapApiEndpoints();
 

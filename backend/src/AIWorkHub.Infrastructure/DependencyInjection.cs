@@ -8,6 +8,10 @@ using AIWorkHub.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AIWorkHub.Infrastructure.Configuration;
+using AIWorkHub.Infrastructure.AI.Services;
+using AIWorkHub.Infrastructure.Email;
+using AIWorkHub.Infrastructure.BackgroundJobs;
 
 namespace AIWorkHub.Infrastructure;
 
@@ -33,6 +37,14 @@ public static class DependencyInjection
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IRealtimeService, SignalRRealtimeService>();
+        services.Configure<OpenAISettings>(configuration.GetSection(OpenAISettings.SectionName));
+        services.AddHttpClient<IAIService, OpenAIService>();
+        services.AddScoped<IReportExportService, ReportExportService>();
+        services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<ReminderJob>();
+        services.AddScoped<WeeklySummaryJob>();
+        services.AddScoped<CleanupJob>();
 
         services.Configure<JwtSettings>(
             configuration.GetSection(JwtSettings.SectionName));
