@@ -29,3 +29,66 @@ chore/repository-hygiene
 - Documentation has been updated where needed.
 - No generated build artifacts, local secrets, or dependency folders are committed.
 - The repository remains free of application code until the planned implementation milestone.
+
+
+## Technology Stack
+
+Backend
+
+- .NET 9
+- Clean Architecture
+- CQRS
+- MediatR
+- Entity Framework Core
+- SQL Server
+- SignalR
+- Hangfire
+
+Frontend
+
+- React
+- TypeScript
+- Vite
+- Material UI
+- React Query
+- Axios
+
+---
+
+## Branch Naming
+
+feature/<feature-name>
+
+Example
+
+feature/dashboard
+
+bugfix/<issue>
+
+hotfix/<issue>
+
+---
+
+## Commit Format
+
+feat:
+
+fix:
+
+refactor:
+
+docs:
+
+test:
+
+Example
+
+feat: add project analytics endpoint
+
+---
+
+## Coding Guidelines
+
+- Follow Clean Architecture
+- Keep CQRS separation
+- Do not access DbContext directly

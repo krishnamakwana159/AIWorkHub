@@ -19,6 +19,18 @@ builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddPersistence(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddHangfire(configuration =>
 {
     configuration.UseSqlServerStorage(
@@ -34,6 +46,8 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseApiDocumentation();
 
 app.UseSerilogRequestLogging();
+
+app.UseCors("Frontend");
 
 app.UseAuthentication();
 
