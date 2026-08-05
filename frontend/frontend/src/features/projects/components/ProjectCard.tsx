@@ -14,10 +14,17 @@ import {
   Chip,
   LinearProgress,
   Stack,
-  Typography
+  Typography,
+  IconButton
 } from "@mui/material";
-
+import Archive from "@mui/icons-material/Archive";
+import Unarchive from "@mui/icons-material/Unarchive";
 import type { Project } from "../types/project";
+import { useToggleFavorite } from "../hooks/useToggleFavorite";
+import { useToggleArchive } from "../hooks/useToggleArchive";
+
+import Star from "@mui/icons-material/Star";
+import StarBorder from "@mui/icons-material/StarBorder";
 
 type Props = {
   project: Project;
@@ -32,6 +39,10 @@ export default function ProjectCard({
   onEdit,
   onDelete
 }: Props) {
+
+  const favoriteMutation = useToggleFavorite();
+  const archiveMutation = useToggleArchive();
+
   return (
     <Card elevation={2}>
       <CardContent>
@@ -121,6 +132,30 @@ export default function ProjectCard({
         >
           Delete
         </Button>
+        <IconButton
+            color="warning"
+            onClick={() =>
+                favoriteMutation.mutate(project.id)
+            }
+        >
+            {project.isFavorite
+                ? <Star />
+                : <StarBorder />}
+        </IconButton>
+        <IconButton
+            color={
+                project.isArchived
+                    ? "success"
+                    : "default"
+            }
+            onClick={() =>
+                archiveMutation.mutate(project.id)
+            }
+        >
+            {project.isArchived
+                ? <Unarchive />
+                : <Archive />}
+        </IconButton>
       </CardActions>
     </Card>
   );

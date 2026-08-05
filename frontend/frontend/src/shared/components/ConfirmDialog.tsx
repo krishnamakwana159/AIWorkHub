@@ -3,26 +3,30 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
-    Typography
+    DialogContentText,
+    DialogTitle
 } from "@mui/material";
 
 type Props = {
     open: boolean;
-    projectName: string;
+    title: string;
+    message: string;
     loading?: boolean;
     onClose(): void;
     onConfirm(): void;
 };
 
-export default function DeleteProjectDialog({
+export default function ConfirmDialog({
     open,
-    projectName,
+    title,
+    message,
     loading = false,
     onClose,
     onConfirm
 }: Props) {
+
     return (
+
         <Dialog
             open={open}
             onClose={onClose}
@@ -30,19 +34,19 @@ export default function DeleteProjectDialog({
             fullWidth
         >
             <DialogTitle>
-                Delete Project
+                {title}
             </DialogTitle>
 
             <DialogContent>
-                <Typography>
-                    Are you sure you want to delete
-                    <strong> {projectName}</strong>?
-                </Typography>
+                <DialogContentText>
+                    {message}
+                </DialogContentText>
             </DialogContent>
 
             <DialogActions>
                 <Button
                     onClick={onClose}
+                    disabled={loading}
                 >
                     Cancel
                 </Button>
@@ -53,7 +57,7 @@ export default function DeleteProjectDialog({
                     onClick={onConfirm}
                     disabled={loading}
                 >
-                    Delete
+                    Confirm
                 </Button>
             </DialogActions>
         </Dialog>

@@ -1,24 +1,31 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import {
+    useMutation,
+    useQueryClient
+} from "@tanstack/react-query";
 
 import { deleteProject } from "../api/projectsApi";
+import { useAppSnackbar } from "@/shared/hooks/useAppSnackbar";
 
 export function useDeleteProject() {
+
     const queryClient = useQueryClient();
+    const snackbar = useAppSnackbar();
 
     return useMutation({
         mutationFn: deleteProject,
-
         onSuccess: () => {
-            toast.success("Project deleted.");
-
+            snackbar.success(
+                "Project deleted successfully."
+            );
             queryClient.invalidateQueries({
                 queryKey: ["projects"]
             });
         },
 
         onError: () => {
-            toast.error("Unable to delete project.");
+            snackbar.error(
+                "Unable to delete project."
+            );
         }
     });
 }

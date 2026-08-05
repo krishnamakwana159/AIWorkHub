@@ -14,10 +14,13 @@ import ProjectTable from "../components/ProjectTable";
 import { useProjects } from "../hooks/useProjects";
 
 import type { Project } from "../types/project";
-import DeleteProjectDialog from "../components/DeleteProjectDialog";
 import { useDeleteProject } from "../hooks/useDeleteProject";
 
+import { useNavigate } from 'react-router-dom'
+import ConfirmDialog from "@/shared/components/ConfirmDialog";
+
 export default function ProjectsPage() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
   const [dialogOpen, setDialogOpen] =
@@ -61,10 +64,7 @@ export default function ProjectsPage() {
   }
 
   function handleView(project: Project) {
-    console.log(project);
-
-    // Next Sprint
-    // navigate(`/projects/${project.id}`);
+    navigate(`/projects/${project.id}`);
   }
   async function confirmDelete() {
       if (!projectToDelete) {
@@ -135,11 +135,10 @@ export default function ProjectsPage() {
         }}
       />
 
-      <DeleteProjectDialog
+      <ConfirmDialog
           open={deleteOpen}
-          projectName={
-              projectToDelete?.name ?? ""
-          }
+          title="Delete Project"
+          message={`Delete "${projectToDelete?.name}" ?`}
           loading={deleteMutation.isPending}
           onClose={() => setDeleteOpen(false)}
           onConfirm={confirmDelete}

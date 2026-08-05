@@ -42,8 +42,6 @@ public sealed class WorkTaskRepository(AppDbContext dbContext)
             .ThenBy(x => x.Order)
             .ToListAsync(cancellationToken);
     }
-
-
     public async Task<List<WorkTask>> GetTasksByStatusAsync(
         Guid projectId,
         WorkTaskStatus status,
@@ -56,7 +54,6 @@ public sealed class WorkTaskRepository(AppDbContext dbContext)
             .OrderBy(x => x.Order)
             .ToListAsync(cancellationToken);
     }
-
     public Task UpdateRangeAsync(
         IEnumerable<WorkTask> tasks,
         CancellationToken cancellationToken)
@@ -65,7 +62,6 @@ public sealed class WorkTaskRepository(AppDbContext dbContext)
 
         return Task.CompletedTask;
     }
-
     public async Task<List<WorkTask>> GetOrderedTasksAsync(
         Guid projectId,
         WorkTaskStatus status,
@@ -78,12 +74,38 @@ public sealed class WorkTaskRepository(AppDbContext dbContext)
             .OrderBy(x => x.Order)
             .ToListAsync(cancellationToken);
     }
-
     public async Task<List<WorkTask>> GetAllTasksAsync(
         CancellationToken cancellationToken)
     {
         return await DbSet
             .Include(x => x.AssignedUser)
             .ToListAsync(cancellationToken);
+    }
+    public async Task ToggleFavoriteAsync(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var task = await DbSet.FirstOrDefaultAsync(
+            x => x.Id == id,
+            cancellationToken);
+
+        if (task is null)
+        {
+            return;
+        }
+
+        task.IsFavorite = !task.IsFavorite;
+    }
+
+    public async Task TogglePinAsync(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var task = await DbSet
+            .FirstAsync(
+                x => x.Id == id,
+                cancellationToken);
+
+        task.IsPinned = !task.IsPinned;
     }
 }

@@ -1,4 +1,6 @@
 using AIWorkHub.Application.Common.Models;
+using AIWorkHub.Application.Features.Kanban.GetBoard;
+using AIWorkHub.Application.Features.Kanban.MoveTask;
 using AIWorkHub.Application.Features.Tasks.Assign;
 using AIWorkHub.Application.Features.Tasks.Attachments.Delete;
 using AIWorkHub.Application.Features.Tasks.Attachments.Download;
@@ -14,6 +16,8 @@ using AIWorkHub.Application.Features.Tasks.DeleteTask;
 using AIWorkHub.Application.Features.Tasks.DTOs;
 using AIWorkHub.Application.Features.Tasks.GetAllTasks;
 using AIWorkHub.Application.Features.Tasks.GetTaskById;
+using AIWorkHub.Application.Features.Tasks.UpdateFavorite;
+using AIWorkHub.Application.Features.Tasks.UpdatePin;
 using AIWorkHub.Application.Features.Tasks.UpdateStatus;
 using AIWorkHub.Application.Features.Tasks.UpdateTask;
 using MediatR;
@@ -266,7 +270,63 @@ public sealed class TasksController(ISender sender) : ControllerBase
             return BadRequest(result);
 
         return NoContent();
-    } 
+    }
     #endregion
+
+    [HttpPatch("{id:guid}/favorite")]
+    public async Task<IActionResult> ToggleFavorite(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new UpdateTaskFavoriteCommand(id),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result)
+            : BadRequest(result);
+    }
+
+    [HttpPatch("{id:guid}/pin")]
+    public async Task<IActionResult> TogglePin(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new UpdateTaskPinCommand(id),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result)
+            : BadRequest(result);
+    }
+
+    [HttpGet("kanban")]
+    public async Task<IActionResult> GetKanban(
+        [FromQuery] Guid projectId,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetKanbanBoardQuery(projectId),
+            cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpPatch("{taskId:guid}/move")]
+    public async Task<IActionResult> Move(
+        Guid taskId,
+        MoveTaskRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new MoveTaskCommand(taskId, request),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result)
+            : BadRequest(result);
+    }
+
 
 }

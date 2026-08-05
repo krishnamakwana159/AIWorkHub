@@ -17,6 +17,12 @@ import NotificationsPage from "@/features/notifications/pages/NotificationsPage"
 import AIPage from "@/features/ai/pages/AIPage";
 import SettingsPage from "@/features/settings/pages/SettingsPage";
 import ProfilePage from "@/features/profile/pages/ProfilePage";
+import ProjectLayout from "@/features/projects/pages/ProjectLayout";
+import ProjectOverviewPage from "@/features/projects/pages/ProjectOverviewPage";
+import ProjectMembersPage from "@/features/projects/pages/ProjectMembersPage";
+import ProjectActivityPage from "@/features/projects/pages/ProjectActivityPage";
+import ProjectTasksPage from "@/features/projects/pages/ProjectTasksPage";
+import KanbanPage from "@/features/tasks/pages/KanbanPage";
 
 export default function AppRoutes() {
     return (
@@ -50,6 +56,38 @@ export default function AppRoutes() {
                             path="/projects"
                             element={<ProjectsPage />}
                         />
+
+                        <Route
+                             path="/projects/:id/kanban"
+                             element={<KanbanPage />}
+                        />
+
+                        <Route
+                            path="/projects/:id"
+                            element={<ProjectLayout />}
+                        >
+                           <Route
+                              index
+                              element={<ProjectOverviewPage />}
+                          />
+
+                          <Route
+                              path="tasks"
+                              element={<ProjectTasksPage />}
+                          />
+
+                          <Route
+                              path="members"
+                              element={<ProjectMembersPage />}
+                          />
+
+                          <Route
+                              path="activity"
+                              element={<ProjectActivityPage />}
+                          />
+
+
+                        </Route>
 
                         <Route
                             path="/tasks"

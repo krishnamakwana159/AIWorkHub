@@ -34,4 +34,12 @@ public interface IWorkTaskRepository : IRepository<WorkTask>
 
     Task<List<WorkTask>> GetAllTasksAsync(
         CancellationToken cancellationToken);
+
+    Task ToggleFavoriteAsync(
+        Guid id,
+        CancellationToken cancellationToken);
+
+    Task TogglePinAsync(
+        Guid id,
+        CancellationToken cancellationToken);
 }

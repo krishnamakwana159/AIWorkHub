@@ -1,7 +1,4 @@
-using AIWorkHub.Application.Interfaces;
 using AIWorkHub.Application.Interfaces.Repositories;
-using AIWorkHub.Domain.Entities;
-using AIWorkHub.Domain.Enums;
 using AIWorkHub.SharedKernel.Interfaces;
 using AIWorkHub.SharedKernel.Results;
 using MediatR;
@@ -9,10 +6,7 @@ using MediatR;
 namespace AIWorkHub.Application.Features.Kanban.MoveTask;
 
 public sealed class MoveTaskCommandHandler(
-    IWorkTaskRepository taskRepository,
-    IActivityService activityService,
-    INotificationService notificationService,
-    IRealtimeService realtimeService,
+    IWorkTaskRepository repository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<MoveTaskCommand, Result>
 {
@@ -20,7 +14,7 @@ public sealed class MoveTaskCommandHandler(
         MoveTaskCommand request,
         CancellationToken cancellationToken)
     {
-        var task = await taskRepository.GetByIdAsync(
+        var task = await repository.GetByIdAsync(
             request.TaskId,
             cancellationToken);
 
@@ -29,106 +23,62 @@ public sealed class MoveTaskCommandHandler(
 
         var oldStatus = task.Status;
 
+        // Source column
+        var sourceTasks = await repository.GetOrderedTasksAsync(
+            request.Request.ProjectId,
+            oldStatus,
+            cancellationToken);
+
+        sourceTasks.RemoveAll(x => x.Id == task.Id);
+
+        for (var i = 0; i < sourceTasks.Count; i++)
+        {
+            sourceTasks[i].Order = i;
+        }
+
+        // Destination column
+        List<Domain.Entities.WorkTask> destinationTasks;
+
         if (oldStatus == request.Request.Status)
         {
-            var tasks = await taskRepository.GetOrderedTasksAsync(
-                task.ProjectId,
-                task.Status,
-                cancellationToken);
-
-            tasks.RemoveAll(x => x.Id == task.Id);
-
-            var newOrder = Math.Clamp(
-                request.Request.Order,
-                0,
-                tasks.Count);
-
-            tasks.Insert(newOrder, task);
-
-            NormalizeOrder(tasks);
-
-            await taskRepository.UpdateRangeAsync(
-                tasks,
-                cancellationToken);
+            destinationTasks = sourceTasks;
         }
         else
         {
-            var sourceTasks =
-                await taskRepository.GetOrderedTasksAsync(
-                    task.ProjectId,
-                    oldStatus,
-                    cancellationToken);
+            destinationTasks = await repository.GetOrderedTasksAsync(
+                request.Request.ProjectId,
+                request.Request.Status,
+                cancellationToken);
+        }
 
-            var destinationTasks =
-                await taskRepository.GetOrderedTasksAsync(
-                    task.ProjectId,
-                    request.Request.Status,
-                    cancellationToken);
+        task.Status = request.Request.Status;
 
-            sourceTasks.RemoveAll(x => x.Id == task.Id);
+        var index = Math.Clamp(
+            request.Request.Order,
+            0,
+            destinationTasks.Count);
 
-            NormalizeOrder(sourceTasks);
+        destinationTasks.Insert(index, task);
 
-            task.Status = request.Request.Status;
+        for (var i = 0; i < destinationTasks.Count; i++)
+        {
+            destinationTasks[i].Order = i;
+        }
 
-            var destinationOrder = Math.Clamp(
-                request.Request.Order,
-                0,
-                destinationTasks.Count);
-
-            destinationTasks.Insert(destinationOrder, task);
-
-            NormalizeOrder(destinationTasks);
-
-            await taskRepository.UpdateRangeAsync(
+        if (oldStatus != request.Request.Status)
+        {
+            await repository.UpdateRangeAsync(
                 sourceTasks,
                 cancellationToken);
-
-            await taskRepository.UpdateRangeAsync(
-                destinationTasks,
-                cancellationToken);
         }
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        await activityService.LogAsync(
-            ActivityEntityType.Task,
-            task.Id,
-            ActivityAction.Updated,
-            $"Moved task to {task.Status}.",
+        await repository.UpdateRangeAsync(
+            destinationTasks,
             cancellationToken);
 
-        if (task.AssignedUserId.HasValue)
-        {
-            await notificationService.NotifyAsync(
-                task.AssignedUserId.Value,
-                "Task Updated",
-                $"'{task.Title}' moved to {task.Status}.",
-                NotificationType.TaskUpdated,
-                $"/tasks/{task.Id}",
-                cancellationToken);
-        }
-
-        await realtimeService.SendToProjectAsync(
-            task.ProjectId,
-            "TaskMoved",
-            new
-            {
-                task.Id,
-                task.Status,
-                task.Order
-            },
+        await unitOfWork.SaveChangesAsync(
             cancellationToken);
 
         return Result.Success();
     }
-
-    private static void NormalizeOrder(List<WorkTask> tasks)
-    {
-        for (var i = 0; i < tasks.Count; i++)
-        {
-            tasks[i].Order = i;
-        }
-    }
-
 }
