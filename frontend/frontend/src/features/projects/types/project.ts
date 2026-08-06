@@ -1,5 +1,6 @@
 import type {
     ProjectPriority,
+    ProjectRole,
     ProjectStatus
 } from "@/shared/constants/project";
 
@@ -44,4 +45,16 @@ export interface UpdateProjectRequest
     extends CreateProjectRequest {
     status: ProjectStatus;
     isFavorite: boolean;
+}
+
+export interface ProjectMember {
+    userId: string;
+    fullName: string;
+    email: string;
+    role: ProjectRole;
+}
+
+export interface AddProjectMemberRequest {
+    userId: string;
+    role: ProjectRole;
 }

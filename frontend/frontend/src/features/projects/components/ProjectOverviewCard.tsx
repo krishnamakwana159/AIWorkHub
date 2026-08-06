@@ -21,9 +21,7 @@ export default function ProjectOverviewCard({
     return (
 
         <Card>
-
             <CardContent>
-
                 <Typography
                     variant="h6"
                     gutterBottom

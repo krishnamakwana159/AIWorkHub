@@ -4,6 +4,7 @@ import type { TaskQuery } from "../types/taskQuery";
 import type { TaskAttachment } from "../types/attachment";
 import type {
   CreateCommentRequest,
+  TaskComment,
   UpdateCommentRequest,
 } from "../types/comment";
 
@@ -47,7 +48,7 @@ export async function updateStatus(id: string, status: number) {
 }
 
 export async function getComments(taskId: string) {
-  const { data } = await apiClient.get(`/tasks/${taskId}/comments`);
+  const { data } = await apiClient.get<TaskComment[]>(`/tasks/${taskId}/comments`);
 
   return data;
 }

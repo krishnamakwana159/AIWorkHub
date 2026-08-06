@@ -21,6 +21,16 @@ export const ProjectPriority = {
 export type ProjectPriority =
     typeof ProjectPriority[keyof typeof ProjectPriority];
 
+export const ProjectRole = {
+    Owner: 1,
+    Manager: 2,
+    Member: 3,
+    Viewer: 4
+} as const;
+
+export type ProjectRole =
+    typeof ProjectRole[keyof typeof ProjectRole];
+
 export const ProjectStatusInfo = {
     [ProjectStatus.Planning]: {
         label: "Planning",
@@ -74,3 +84,10 @@ export const ProjectPriorityInfo = {
         color: ChipProps["color"];
     }
 >;
+
+export const ProjectRoleInfo = {
+    [ProjectRole.Owner]: "Owner",
+    [ProjectRole.Manager]: "Manager",
+    [ProjectRole.Member]: "Member",
+    [ProjectRole.Viewer]: "Viewer"
+} satisfies Record<ProjectRole, string>;

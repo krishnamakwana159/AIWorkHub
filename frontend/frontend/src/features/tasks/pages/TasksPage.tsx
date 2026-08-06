@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -22,6 +22,8 @@ import type { WorkTask } from "../types/task";
 export default function TasksPage() {
 
     const { id: projectId } = useParams();
+    console.log("TasksPage projectId:", projectId);
+    const navigate = useNavigate();
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null);
@@ -50,9 +52,7 @@ export default function TasksPage() {
     }
 
     function handleView(task: WorkTask) {
-        console.log(task);
-        // Next Sprint
-        // navigate(`/tasks/${task.id}`);
+        navigate(`/tasks/${task.id}`);
     }
 
     function handleDelete(task: WorkTask) {

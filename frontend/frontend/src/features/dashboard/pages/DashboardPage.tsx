@@ -35,7 +35,7 @@ export default function DashboardPage() {
         );
     }
 
-    const overview = data.value.overview;
+    const overview = data.overview;
 
     return (
         <PageContainer>

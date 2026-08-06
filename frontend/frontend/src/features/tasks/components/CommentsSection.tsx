@@ -6,6 +6,7 @@ import CommentForm from "./CommentForm";
 import { useComments } from "../hooks/useComments";
 import { useCreateComment } from "../hooks/useCreateComment";
 import { useDeleteComment } from "../hooks/useDeleteComment";
+import type { TaskComment } from "../types/comment";
 
 type Props = {
   taskId: string;
@@ -35,7 +36,7 @@ export default function CommentsSection({ taskId }: Props) {
 
       <CommentForm loading={createMutation.isPending} onSubmit={handleCreate} />
 
-      {comments.map((comment) => (
+      {comments.map((comment: TaskComment) => (
         <CommentCard
           key={comment.id}
           comment={comment}

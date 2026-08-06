@@ -3,6 +3,8 @@ import apiClient from "@/shared/api/apiClient";
 import type {
     CreateProjectRequest,
     Project,
+    ProjectMember,
+    AddProjectMemberRequest,
     UpdateProjectRequest
 } from "../types/project";
 
@@ -69,3 +71,24 @@ export const toggleArchive = (
 ) => apiClient.patch(
     `/projects/${id}/archive`
 );
+
+export async function getProjectMembers(
+    projectId: string
+) {
+    const { data } =
+        await apiClient.get<ProjectMember[]>(
+            `/projects/${projectId}/members`
+        );
+
+    return data;
+}
+
+export async function addProjectMember(
+    projectId: string,
+    request: AddProjectMemberRequest
+) {
+    await apiClient.post(
+        `/projects/${projectId}/members`,
+        request
+    );
+}

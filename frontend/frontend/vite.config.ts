@@ -6,5 +6,8 @@ export default defineConfig({
   plugins: [
     react(),
     tsconfigPaths()
-  ]
+  ],
+  optimizeDeps: {
+    include: ['@mui/icons-material'], // Forces Vite to pre-bundle the package
+  },
 });

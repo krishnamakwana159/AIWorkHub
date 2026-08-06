@@ -1,7 +1,10 @@
-import EmptyState from "@/components/ui/EmptyState";
+import { useOutletContext } from "react-router-dom";
+
+import ProjectTasksTab from "../components/ProjectTasksTab";
+import type { ProjectOutletContext } from "./ProjectLayout";
 
 export default function ProjectTasksPage() {
-    return (
-        <EmptyState message="Project Tasks module coming soon." />
-    );
+  const { project } = useOutletContext<ProjectOutletContext>();
+
+  return <ProjectTasksTab project={project} />;
 }

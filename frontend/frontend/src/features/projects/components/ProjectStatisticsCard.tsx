@@ -14,7 +14,7 @@ type Props = {
 export default function ProjectStatisticsCard({
     project
 }: Props) {
-
+    console.log("ProjectStatisticsCard project:", project);
     return (
         <Card>
             <CardContent>

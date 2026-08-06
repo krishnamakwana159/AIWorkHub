@@ -23,6 +23,7 @@ import ProjectMembersPage from "@/features/projects/pages/ProjectMembersPage";
 import ProjectActivityPage from "@/features/projects/pages/ProjectActivityPage";
 import ProjectTasksPage from "@/features/projects/pages/ProjectTasksPage";
 import KanbanPage from "@/features/tasks/pages/KanbanPage";
+import TaskDetailsPage from "@/features/tasks/pages/TaskDetailsPage";
 
 export default function AppRoutes() {
     return (
@@ -92,6 +93,11 @@ export default function AppRoutes() {
                         <Route
                             path="/tasks"
                             element={<TasksPage />}
+                        />
+
+                        <Route
+                            path="/tasks/:id"
+                            element={<TaskDetailsPage />}
                         />
 
                         <Route
