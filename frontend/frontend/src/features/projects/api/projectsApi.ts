@@ -9,6 +9,7 @@ import type {
 } from "../types/project";
 
 import type { ProjectQuery } from "../types/projectQuery";
+import type { ProjectRole } from "@/shared/constants/project";
 
 export async function createProject(
     request: CreateProjectRequest
@@ -46,7 +47,7 @@ export async function getProjects(
     query: ProjectQuery
 ) {
     const { data } =
-        await apiClient.get(
+        await apiClient.get<Project[]>(
             "/projects",
             {
                 params: query
@@ -90,5 +91,25 @@ export async function addProjectMember(
     await apiClient.post(
         `/projects/${projectId}/members`,
         request
+    );
+}
+
+export async function updateProjectMemberRole(
+    projectId: string,
+    userId: string,
+    role: ProjectRole
+) {
+    await apiClient.put(
+        `/projects/${projectId}/members/${userId}/role`,
+        { role }
+    );
+}
+
+export async function removeProjectMember(
+    projectId: string,
+    userId: string
+) {
+    await apiClient.delete(
+        `/projects/${projectId}/members/${userId}`
     );
 }

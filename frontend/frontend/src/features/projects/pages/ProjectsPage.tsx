@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 
@@ -16,18 +16,28 @@ import { useProjects } from "../hooks/useProjects";
 import type { Project } from "../types/project";
 import { useDeleteProject } from "../hooks/useDeleteProject";
 
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import ConfirmDialog from "@/shared/components/ConfirmDialog";
 
 export default function ProjectsPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState("");
 
   const [dialogOpen, setDialogOpen] =
-    useState(false);
+    useState(() => searchParams.get("new") === "1");
 
   const [selectedProject, setSelectedProject] =
     useState<Project | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("new") === "1") {
+      const next = new URLSearchParams(searchParams);
+      next.delete("new");
+      setSearchParams(next, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const deleteMutation = useDeleteProject();
 

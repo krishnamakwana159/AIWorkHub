@@ -17,4 +17,8 @@ public interface IUserRepository : IRepository<User>
 
     Task<List<User>> GetAllUsersWithTasksAsync(
         CancellationToken cancellationToken);
+
+    Task<User?> GetByIdWithRolesAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
 }

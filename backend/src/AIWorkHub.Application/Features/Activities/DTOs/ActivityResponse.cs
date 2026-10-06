@@ -16,5 +16,7 @@ public sealed class ActivityResponse
 
     public Guid? UserId { get; set; }
 
+    public string? UserName { get; set; }
+
     public DateTimeOffset CreatedAtUtc { get; set; }
 }

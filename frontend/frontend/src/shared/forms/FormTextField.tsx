@@ -43,6 +43,17 @@ export default function FormTextField({
                     helperText={
                         fieldState.error?.message
                     }
+                    onChange={(e) => {
+                        if (type === "number") {
+                            const value = e.target.value;
+                            field.onChange(
+                                value === "" ? undefined : Number(value)
+                            );
+                            return;
+                        }
+
+                        field.onChange(e);
+                    }}
                 />
             )}
         />

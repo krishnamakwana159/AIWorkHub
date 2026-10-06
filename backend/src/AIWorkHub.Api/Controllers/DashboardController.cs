@@ -20,7 +20,9 @@ public sealed class DashboardController(ISender sender)
             new GetDashboardQuery(),
             cancellationToken);
 
-        return Ok(result);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
     }
 
      [HttpGet("dashboard-analytics")]
@@ -32,8 +34,8 @@ public sealed class DashboardController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 }

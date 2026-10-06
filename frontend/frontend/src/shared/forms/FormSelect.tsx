@@ -22,6 +22,10 @@ export default function FormSelect({
         control
     } = useFormContext();
 
+    const isNumeric = options.every(
+        option => typeof option.value === "number"
+    );
+
     return (
         <Controller
             name={name}
@@ -39,6 +43,11 @@ export default function FormSelect({
                     helperText={
                         fieldState.error?.message
                     }
+                    onChange={(e) => {
+                        field.onChange(
+                            isNumeric ? Number(e.target.value) : e.target.value
+                        );
+                    }}
                 >
                     {options.map(option => (
                         <MenuItem

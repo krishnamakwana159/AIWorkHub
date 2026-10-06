@@ -13,6 +13,8 @@ public sealed class RefreshTokenRepository(AppDbContext context)
     {
         return await DbSet
             .Include(x => x.User)
+                .ThenInclude(x => x.UserRoles)
+                    .ThenInclude(x => x.Role)
             .FirstOrDefaultAsync(
                 x => x.Token == token,
                 cancellationToken);

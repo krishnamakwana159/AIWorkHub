@@ -59,7 +59,7 @@ export default function TaskStatisticsCard({ task }: Props) {
               }}
             />
 
-            <Typography sx={{mt:1, variant:"body2"}}>
+            <Typography variant="body2" sx={{ mt: 1 }}>
               {progress}%
             </Typography>
           </Grid>

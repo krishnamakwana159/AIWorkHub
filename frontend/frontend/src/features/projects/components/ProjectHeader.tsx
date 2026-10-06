@@ -40,111 +40,115 @@ export default function ProjectHeader({
     const navigate = useNavigate();
 
     return (
-
         <Stack
-            sx={{ mb: 3, justifyContent:"space-between", direction:"row", alignItems:"center" }}
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            sx={{
+                mb: 3,
+                justifyContent: "space-between",
+                alignItems: { xs: "flex-start", sm: "center" }
+            }}
         >
-            <Stack spacing={1}>
-                <Stack
-                    sx={{direction:"row",
-                    spacing:1,
-                    alignItems:"center"}}
-                >
-                    <IconButton
-                        onClick={() => navigate("/projects")}
-                    >
-                        <ArrowBackIcon />
-                    </IconButton>
-
-                    <Typography
-                        sx={{variant:"h4",
-                        fontWeight:700}}
-                    >
-                        {project.name}
-                    </Typography>
-
-                    <Tooltip title="Favorite">
-
-                        <IconButton
-                            color="warning"
-                            onClick={onToggleFavorite}
-                        >
-                            {project.isFavorite
-                                ? <StarIcon />
-                                : <StarBorderIcon />}
-                        </IconButton>
-
-                    </Tooltip>
-                    <Tooltip
-                        title={
-                            project.isArchived
-                                ? "Restore"
-                                : "Archive"
-                        }
-                    >
-                        <IconButton onClick={onToggleArchive}>
-                            {project.isArchived
-                                ? <UnarchiveIcon />
-                                : <ArchiveIcon />}
-                        </IconButton>
-                    </Tooltip>
-
-                </Stack>
-
-                <Typography color="text.secondary">
-
-                    {project.description || "No description"}
-
-                </Typography>
-
-                <Stack
-                    direction="row"
-                    spacing={1}
-                >
-
-                    <Chip
-                        label={
-                            ProjectStatusInfo[
-                                project.status
-                            ].label
-                        }
-                        color={
-                            ProjectStatusInfo[
-                                project.status
-                            ].color
-                        }
-                    />
-
-                    <Chip
-                        label={
-                            ProjectPriorityInfo[
-                                project.priority
-                            ].label
-                        }
-                        color={
-                            ProjectPriorityInfo[
-                                project.priority
-                            ].color
-                        }
-                    />
-
-                </Stack>
-
-            </Stack>
-
-            <Box>
-
+            <Stack direction="row" spacing={2} sx={{ alignItems: "center", minWidth: 0 }}>
                 <IconButton
-                    color="primary"
-                    onClick={onEdit}
+                    onClick={() => navigate("/projects")}
+                    sx={{ flexShrink: 0 }}
                 >
-                    <EditIcon />
+                    <ArrowBackIcon />
                 </IconButton>
 
-            </Box>
+                <Box
+                    sx={{
+                        width: 6,
+                        alignSelf: "stretch",
+                        borderRadius: 999,
+                        bgcolor: project.color || "primary.main",
+                        flexShrink: 0
+                    }}
+                />
 
+                <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+                    <Stack
+                        direction="row"
+                        spacing={1.5}
+                        sx={{ alignItems: "center", flexWrap: "wrap" }}
+                    >
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                fontWeight: 700,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap"
+                            }}
+                        >
+                            {project.name}
+                        </Typography>
+
+                        <Chip
+                            size="small"
+                            label={ProjectStatusInfo[project.status].label}
+                            color={ProjectStatusInfo[project.status].color}
+                        />
+
+                        <Chip
+                            size="small"
+                            label={ProjectPriorityInfo[project.priority].label}
+                            color={ProjectPriorityInfo[project.priority].color}
+                        />
+                    </Stack>
+
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: 480
+                        }}
+                    >
+                        {project.description || "No description"}
+                    </Typography>
+                </Stack>
+            </Stack>
+
+            <Stack direction="row" spacing={0.5} sx={{ alignSelf: { xs: "flex-end", sm: "center" }, flexShrink: 0 }}>
+                <Tooltip title={project.isFavorite ? "Remove from favorites" : "Add to favorites"}>
+                    <IconButton
+                        color="warning"
+                        onClick={onToggleFavorite}
+                    >
+                        {project.isFavorite
+                            ? <StarIcon />
+                            : <StarBorderIcon />}
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip
+                    title={
+                        project.isArchived
+                            ? "Restore"
+                            : "Archive"
+                    }
+                >
+                    <IconButton onClick={onToggleArchive}>
+                        {project.isArchived
+                            ? <UnarchiveIcon />
+                            : <ArchiveIcon />}
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Edit project">
+                    <IconButton
+                        color="primary"
+                        onClick={onEdit}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
+            </Stack>
         </Stack>
-
     );
 
 }

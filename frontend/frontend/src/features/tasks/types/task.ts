@@ -15,6 +15,8 @@ export interface WorkTask {
   startDateUtc?: string;
   dueDateUtc?: string;
   completedAtUtc?: string;
+  assigneeId?: string;
+  assigneeName?: string;
 }
 
 export interface CreateTaskRequest {

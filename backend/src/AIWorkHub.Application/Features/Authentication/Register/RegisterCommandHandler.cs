@@ -3,6 +3,7 @@ using AIWorkHub.Application.Features.Authentication.DTOs;
 using AIWorkHub.Application.Interfaces;
 using AIWorkHub.Application.Interfaces.Repositories;
 using AIWorkHub.Domain.Entities;
+using AIWorkHub.SharedKernel.Constants;
 using AIWorkHub.SharedKernel.Interfaces;
 using AIWorkHub.SharedKernel.Results;
 using MediatR;
@@ -10,6 +11,7 @@ using MediatR;
 namespace AIWorkHub.Application.Features.Authentication.Register;
 
 public sealed class RegisterCommandHandler(IUserRepository userRepository,
+    IRoleRepository roleRepository,
     IPasswordHasher passwordHasher,
     IUnitOfWork unitOfWork,
     IAuthenticationService authenticationService)
@@ -30,6 +32,15 @@ public sealed class RegisterCommandHandler(IUserRepository userRepository,
             PasswordHash = passwordHasher.HashPassword(request.Request.Password),
             IsActive = true
         };
+
+        var userRole = await roleRepository.GetByNameAsync(
+            ApplicationRoles.User,
+            cancellationToken);
+
+        if (userRole is not null)
+        {
+            user.UserRoles.Add(new UserRole { Role = userRole });
+        }
 
         await userRepository.AddAsync(user, cancellationToken);
 

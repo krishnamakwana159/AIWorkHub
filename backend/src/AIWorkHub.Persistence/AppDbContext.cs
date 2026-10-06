@@ -30,6 +30,8 @@ public sealed class AppDbContext(
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();
     public DbSet<WorkTimeEntry> WorkTimeEntries => Set<WorkTimeEntry>();
+    public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<TaskTag> TaskTags => Set<TaskTag>();
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,6 +40,7 @@ public sealed class AppDbContext(
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         ApplySoftDeleteQueryFilters(modelBuilder);
+        
     }
 
     /// <inheritdoc />

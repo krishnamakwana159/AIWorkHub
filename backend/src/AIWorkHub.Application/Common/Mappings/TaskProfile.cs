@@ -11,7 +11,16 @@ public sealed class TaskProfile : Profile
 {
     public TaskProfile()
     {
-        CreateMap<WorkTask, TaskResponse>();
+        CreateMap<WorkTask, TaskResponse>()
+            .ForMember(
+                d => d.AssigneeId,
+                o => o.MapFrom(s => s.AssignedUserId))
+            .ForMember(
+                d => d.AssigneeName,
+                o => o.MapFrom(s =>
+                    s.AssignedUser == null
+                        ? null
+                        : $"{s.AssignedUser.FirstName} {s.AssignedUser.LastName}".Trim()));
 
         CreateMap<CreateTaskRequest, WorkTask>();
 

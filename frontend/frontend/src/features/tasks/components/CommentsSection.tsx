@@ -6,6 +6,7 @@ import CommentForm from "./CommentForm";
 import { useComments } from "../hooks/useComments";
 import { useCreateComment } from "../hooks/useCreateComment";
 import { useDeleteComment } from "../hooks/useDeleteComment";
+import { useUpdateComment } from "../hooks/useUpdateComment";
 import type { TaskComment } from "../types/comment";
 
 type Props = {
@@ -15,11 +16,21 @@ type Props = {
 export default function CommentsSection({ taskId }: Props) {
   const { data: comments = [] } = useComments(taskId);
   const createMutation = useCreateComment();
+  const updateMutation = useUpdateComment();
   const deleteMutation = useDeleteComment();
 
   async function handleCreate(content: string) {
     await createMutation.mutateAsync({
       taskId,
+      request: {
+        content,
+      },
+    });
+  }
+
+  async function handleUpdate(id: string, content: string) {
+    await updateMutation.mutateAsync({
+      commentId: id,
       request: {
         content,
       },
@@ -41,6 +52,8 @@ export default function CommentsSection({ taskId }: Props) {
           key={comment.id}
           comment={comment}
           onDelete={handleDelete}
+          onUpdate={handleUpdate}
+          updating={updateMutation.isPending}
         />
       ))}
     </Stack>

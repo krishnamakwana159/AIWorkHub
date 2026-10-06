@@ -15,6 +15,7 @@ export default function ProjectTabs({
   const tabs = [
     { label: "Overview", path: basePath },
     { label: "Tasks", path: `${basePath}/tasks` },
+    { label: "Kanban", path: `${basePath}/kanban` },
     { label: "Members", path: `${basePath}/members` },
     { label: "Activity", path: `${basePath}/activity` },
   ];

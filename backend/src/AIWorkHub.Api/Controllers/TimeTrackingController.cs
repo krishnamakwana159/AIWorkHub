@@ -1,4 +1,6 @@
 using AIWorkHub.Application.Features.TimeTracking.AddManualEntry;
+using AIWorkHub.Application.Features.TimeTracking.GetRunningTimer;
+using AIWorkHub.Application.Features.TimeTracking.GetTaskEntries;
 using AIWorkHub.Application.Features.TimeTracking.StartTimer;
 using AIWorkHub.Application.Features.TimeTracking.StopTimer;
 using MediatR;
@@ -13,6 +15,33 @@ namespace AIWorkHub.Api.Controllers;
 public sealed class TimeTrackingController(ISender sender)
     : ControllerBase
 {
+    [HttpGet("running")]
+    public async Task<IActionResult> GetRunning(
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetRunningTimerQuery(),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
+    }
+
+    [HttpGet("task/{taskId:guid}")]
+    public async Task<IActionResult> GetTaskEntries(
+        Guid taskId,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetTaskTimeEntriesQuery(taskId),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
+    }
+
     [HttpPost("start")]
     public async Task<IActionResult> Start(
         StartTimerRequest request,
@@ -23,9 +52,9 @@ public sealed class TimeTrackingController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
-        return Ok(result);
+        return NoContent();
     }
 
 
@@ -38,9 +67,9 @@ public sealed class TimeTrackingController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
-        return Ok(result);
+        return NoContent();
     }
 
     [HttpPost("manual")]
@@ -53,9 +82,9 @@ public sealed class TimeTrackingController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
-        return Ok(result);
+        return NoContent();
     }
 
 }

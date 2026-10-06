@@ -28,7 +28,7 @@ export default function KanbanColumn({ column }: Props) {
         minHeight: 650,
       }}
     >
-      <Typography sx={{variant:"h6", mb:2}}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
         {column.title}({column.count})
       </Typography>
 

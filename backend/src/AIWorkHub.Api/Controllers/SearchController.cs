@@ -20,6 +20,8 @@ public sealed class SearchController(ISender sender)
             new SearchQuery(q),
             cancellationToken);
 
-        return Ok(result);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
     }
 }

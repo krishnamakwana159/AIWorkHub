@@ -25,7 +25,7 @@ public sealed class UpdateTaskStatusCommandHandler(
             return Result<CommentResponse>.Failure("User not found.");
         }
 
-        var task = await taskRepository.GetByIdAsync(
+        var task = await taskRepository.GetByIdWithAssigneeAsync(
             request.TaskId,
             cancellationToken);
 
@@ -49,7 +49,7 @@ public sealed class UpdateTaskStatusCommandHandler(
         taskRepository.Update(task);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        if(task.Status == WorkTaskStatus.Completed)
+        if (task.Status == WorkTaskStatus.Completed && task.AssignedUser is not null)
         {
             await emailService.SendAsync(
                 task.AssignedUser.Email,
@@ -61,7 +61,6 @@ public sealed class UpdateTaskStatusCommandHandler(
                 """,
                 cancellationToken);
         }
-       
         await notificationService.NotifyAsync(
             currentUserId,
             "Task Status Updated",

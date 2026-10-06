@@ -28,5 +28,6 @@ public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<App
         public string? UserId => "design-time";
 
         public bool IsAuthenticated => false;
+        public bool IsAdministrator => false;
     }
 }

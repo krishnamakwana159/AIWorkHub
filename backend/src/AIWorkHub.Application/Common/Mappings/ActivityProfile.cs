@@ -8,6 +8,12 @@ public sealed class ActivityProfile : Profile
 {
     public ActivityProfile()
     {
-        CreateMap<ActivityLog, ActivityResponse>();
+        CreateMap<ActivityLog, ActivityResponse>()
+            .ForMember(
+                d => d.UserName,
+                o => o.MapFrom(s =>
+                    s.User == null
+                        ? null
+                        : $"{s.User.FirstName} {s.User.LastName}".Trim()));
     }
 }

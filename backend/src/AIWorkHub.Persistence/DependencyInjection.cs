@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using AIWorkHub.Application.Common.Interfaces;
 using AIWorkHub.Application.Interfaces;
 using AIWorkHub.Persistence.Services;
+using AIWorkHub.Persistence.Seed;
 
 namespace AIWorkHub.Persistence;
 
@@ -54,6 +55,11 @@ public static class DependencyInjection
         services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
         services.AddScoped<IWorkTimeEntryRepository, WorkTimeEntryRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<DatabaseSeeder>();
+
+        services.AddScoped<ITagRepository, TagRepository>();
+        services.AddScoped<ITaskTagRepository, TaskTagRepository>();
 
         return services;
     }

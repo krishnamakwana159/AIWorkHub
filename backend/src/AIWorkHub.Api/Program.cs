@@ -7,6 +7,7 @@ using Serilog;
 using AIWorkHub.Infrastructure.Hubs;
 using Hangfire;
 using AIWorkHub.Infrastructure.BackgroundJobs;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,16 @@ builder.Services.AddHangfire(configuration =>
 builder.Services.AddHangfireServer();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+
+    var seeder = scope.ServiceProvider
+        .GetRequiredService<AIWorkHub.Persistence.Seed.DatabaseSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 

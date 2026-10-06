@@ -30,11 +30,13 @@ public sealed class ProjectRepository(AppDbContext context)
     }
 
     public async Task<IReadOnlyList<Project>> GetAllAsync(
-        Guid ownerId,
+        Guid userId,
         CancellationToken cancellationToken = default)
     {
         return await DbSet
-            .Where(x => x.OwnerId == ownerId)
+            .Where(x =>
+                x.OwnerId == userId ||
+                x.Members.Any(m => m.UserId == userId))
             .OrderByDescending(x => x.CreatedAtUtc)
             .ToListAsync(cancellationToken);
     }

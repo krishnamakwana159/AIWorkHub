@@ -3,7 +3,7 @@ import type { TaskAttachment } from "../types/attachment";
 
 type Props = {
   attachment: TaskAttachment;
-  onDownload(id: string): void;
+  onDownload(attachment: TaskAttachment): void;
   onDelete(id: string): void;
 };
 
@@ -16,20 +16,21 @@ export default function AttachmentCard({
     <Card>
       <CardContent>
         <Stack
-          sx={{direction:"row",
-          justifyContent:"space-between",
-          alignItems:"center"}}
+          direction="row"
+          sx={{ justifyContent: "space-between", alignItems: "center" }}
         >
           <div>
-            <Typography sx={{fontWeight:600}}>{attachment.fileName}</Typography>
+            <Typography sx={{ fontWeight: 600 }}>
+              {attachment.fileName}
+            </Typography>
 
             <Typography variant="body2" color="text.secondary">
-              {(attachment.size / 1024).toFixed(2)} KB
+              {(attachment.size / 1024).toFixed(2)} KB · {attachment.uploadedBy}
             </Typography>
           </div>
 
           <Stack direction="row" spacing={1}>
-            <Button onClick={() => onDownload(attachment.id)}>Download</Button>
+            <Button onClick={() => onDownload(attachment)}>Download</Button>
 
             <Button color="error" onClick={() => onDelete(attachment.id)}>
               Delete

@@ -53,18 +53,18 @@ public sealed class StopTimerCommandHandler(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await realtimeService.SendToProjectAsync(
-            task.ProjectId,
-            "TimerStopped",
-            new
-            {
-                task.Id,
-                hours = entry.Hours
-            },
-            cancellationToken);
-
         if (task is not null)
         {
+            await realtimeService.SendToProjectAsync(
+                task.ProjectId,
+                "TimerStopped",
+                new
+                {
+                    task.Id,
+                    hours = entry.Hours
+                },
+                cancellationToken);
+
             await activityService.LogAsync(
                 ActivityEntityType.Task,
                 task.Id,

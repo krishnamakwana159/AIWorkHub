@@ -20,8 +20,36 @@ public sealed class GetAllProjectsQueryHandler(
 
         var projects = await repository.GetAllAsync(ownerId, cancellationToken);
 
+        var filtered = projects.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search.Trim();
+            filtered = filtered.Where(x =>
+                x.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (request.Status.HasValue)
+            filtered = filtered.Where(x => x.Status == request.Status.Value);
+
+        if (request.Priority.HasValue)
+            filtered = filtered.Where(x => x.Priority == request.Priority.Value);
+
+        if (request.Favorite.HasValue)
+            filtered = filtered.Where(x => x.IsFavorite == request.Favorite.Value);
+
+        if (request.Archived.HasValue)
+            filtered = filtered.Where(x => x.IsArchived == request.Archived.Value);
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize is < 1 or > 100 ? 10 : request.PageSize;
+
+        var paged = filtered
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize);
+
         return Result<List<ProjectResponse>>.Success(
-            projects.Select(x => new ProjectResponse
+            paged.Select(x => new ProjectResponse
             {
                 Id = x.Id,
                 Name = x.Name,

@@ -1,6 +1,7 @@
 using AIWorkHub.Application.Features.ProjectMembers.AddMember;
 using AIWorkHub.Application.Features.ProjectMembers.DTOs;
 using AIWorkHub.Application.Features.ProjectMembers.GetMembers;
+using AIWorkHub.Application.Features.ProjectMembers.RemoveMember;
 using AIWorkHub.Application.Features.Projects.Archive;
 using AIWorkHub.Application.Features.Projects.Create;
 using AIWorkHub.Application.Features.Projects.Delete;
@@ -10,6 +11,10 @@ using AIWorkHub.Application.Features.Projects.GetById;
 using AIWorkHub.Application.Features.Projects.Restore;
 using AIWorkHub.Application.Features.Projects.ToggleFavorite;
 using AIWorkHub.Application.Features.Projects.Update;
+using AIWorkHub.Application.Features.Tags.CreateTag;
+using AIWorkHub.Application.Features.Tags.DeleteTag;
+using AIWorkHub.Application.Features.Tags.DTOs;
+using AIWorkHub.Application.Features.Tags.GetProjectTags;
 using AIWorkHub.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -135,7 +140,7 @@ public sealed class ProjectsController(IMediator mediator)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
         return NoContent();
     }
@@ -149,8 +154,84 @@ public sealed class ProjectsController(IMediator mediator)
             new GetProjectMembersQuery(projectId),
             cancellationToken);
 
-        return Ok(result);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
+    }
+
+    // [HttpPut("{projectId:guid}/members/{userId:guid}/role")]
+    // public async Task<IActionResult> UpdateMemberRole(
+    //     Guid projectId,
+    //     Guid userId,
+    //     UpdateProjectMemberRoleRequest request,
+    //     CancellationToken cancellationToken)
+    // {
+    //     var result = await mediator.Send(
+    //         new UpdateProjectMemberRoleCommand(projectId, userId, request),
+    //         cancellationToken);
+
+    //     return result.IsSuccess
+    //         ? NoContent()
+    //         : BadRequest(result.Errors);
+    // }
+
+    [HttpDelete("{projectId:guid}/members/{userId:guid}")]
+    public async Task<IActionResult> RemoveMember(
+        Guid projectId,
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(
+            new RemoveProjectMemberCommand(projectId, userId),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? NoContent()
+            : BadRequest(result.Errors);
     }
     #endregion
 
+    [HttpPost("{projectId:guid}/tags")]
+    public async Task<IActionResult> CreateTag(
+        Guid projectId,
+        CreateTagRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(
+            new CreateTagCommand(projectId, request),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
+    }
+
+    [HttpGet("{projectId:guid}/tags")]
+    public async Task<IActionResult> GetTags(
+        Guid projectId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(
+            new GetProjectTagsQuery(projectId),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
+    }
+
+    [HttpDelete("{projectId:guid}/tags/{tagId:guid}")]
+    public async Task<IActionResult> DeleteTag(
+        Guid projectId,
+        Guid tagId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(
+            new DeleteTagCommand(tagId),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? NoContent()
+            : BadRequest(result.Errors);
+    }
 }

@@ -6,7 +6,6 @@ using AIWorkHub.Application.Features.AI.SuggestPriority;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Ocsp;
 
 namespace AIWorkHub.Api.Controllers;
 
@@ -27,8 +26,8 @@ public sealed class AIController(
             cancellationToken);
 
         return result.IsSuccess
-            ? Ok(result)
-            : BadRequest(result);
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
     }
 
     [HttpPost("generate-description")]

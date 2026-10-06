@@ -114,7 +114,7 @@ namespace AIWorkHub.Persistence.Migrations
 
                     b.HasIndex("UserId1");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("AIWorkHub.Domain.Entities.Project", b =>
@@ -226,7 +226,7 @@ namespace AIWorkHub.Persistence.Migrations
                     b.HasIndex("ProjectId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("ProjectMembers");
+                    b.ToTable("ProjectMembers", (string)null);
                 });
 
             modelBuilder.Entity("AIWorkHub.Domain.Entities.RefreshToken", b =>

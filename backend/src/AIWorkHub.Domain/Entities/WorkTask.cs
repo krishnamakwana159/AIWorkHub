@@ -39,4 +39,5 @@ public sealed class WorkTask : SoftDeleteEntity
     public ICollection<TaskComment> Comments { get; set; } = new List<TaskComment>();
     public ICollection<TaskAttachment> Attachments { get; set; } = new List<TaskAttachment>();
     public ICollection<WorkTimeEntry> TimeEntries { get; set; } = new List<WorkTimeEntry>();
+    public ICollection<TaskTag> Tags { get; set; } = new List<TaskTag>();
 }

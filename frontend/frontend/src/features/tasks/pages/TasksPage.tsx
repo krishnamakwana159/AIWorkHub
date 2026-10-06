@@ -1,154 +1,108 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
+import { Chip, Link, Typography } from "@mui/material";
 
 import PageContainer from "@/components/common/PageContainer";
 import PageTitle from "@/components/common/PageTitle";
-
 import AppLoader from "@/components/ui/AppLoader";
 import EmptyState from "@/components/ui/EmptyState";
+import DataTable from "@/components/ui/DataTable";
 
-import TaskDialog from "../components/TaskDialog";
-import TaskTable from "../components/TaskTable";
-import DeleteTaskDialog from "../components/DeleteTaskDialog";
+import { TaskPriorityInfo, WorkTaskStatusInfo } from "@/shared/constants/task";
 
-import { useTasks } from "../hooks/useTasks";
-import { useDeleteTask } from "../hooks/useDeleteTask";
-
-import type { WorkTask } from "../types/task";
+import { useMyTasks } from "../hooks/useMyTasks";
+import type { MyTask } from "../types/myTask";
 
 export default function TasksPage() {
-
-    const { id: projectId } = useParams();
-    console.log("TasksPage projectId:", projectId);
     const navigate = useNavigate();
-
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedTask, setSelectedTask] = useState<WorkTask | null>(null);
-    const [deleteOpen, setDeleteOpen] = useState(false);
-    const [taskToDelete, setTaskToDelete] = useState<WorkTask | null>(null);
-
-    const deleteMutation =
-        useDeleteTask();
-
-    const {
-        data: tasks,
-        isPending,
-        isError
-    } = useTasks({
-        projectId: projectId ?? ""
-    });
-
-    function handleCreate() {
-        setSelectedTask(null);
-        setDialogOpen(true);
-    }
-
-    function handleEdit(task: WorkTask) {
-        setSelectedTask(task);
-        setDialogOpen(true);
-    }
-
-    function handleView(task: WorkTask) {
-        navigate(`/tasks/${task.id}`);
-    }
-
-    function handleDelete(task: WorkTask) {
-        setTaskToDelete(task);
-        setDeleteOpen(true);
-    }
-
-    async function confirmDelete() {
-        if (!taskToDelete)
-            return;
-
-        await deleteMutation.mutateAsync(
-            taskToDelete.id
-        );
-        setDeleteOpen(false);
-        setTaskToDelete(null);
-    }
+    const { data: tasks = [], isPending, isError } = useMyTasks();
 
     return (
         <PageContainer>
             <PageTitle
                 title="Tasks"
-                subtitle="Manage project tasks"
-            />
-            <Grid
-                container
-                spacing={3}
-                sx={{ mt: 1 }}
-            >
-                <Grid size={12}>
-                    <Button
-                        variant="contained"
-                        onClick={handleCreate}
-                    >
-                        New Task
-                    </Button>
-                </Grid>
-
-                <Grid size={12}>
-                    {isPending &&
-                        <AppLoader />
-                    }
-
-                    {isError &&
-                        <EmptyState
-                            message="Unable to load tasks."
-                        />
-                    }
-
-                    {!isPending &&
-                        !isError &&
-                        tasks && (
-                            // <TextField
-                            //     fullWidth
-                            //     label="Search Tasks"
-                            //     value={query.search ?? ""}
-                            //     onChange={e =>
-                            //         setQuery({
-                            //             ...query,
-                            //             search: e.target.value
-                            //         })
-                            //     }
-                            // />
-                            <TaskTable
-                                tasks={tasks}
-                                onView={handleView}
-                                onEdit={handleEdit}
-                                onDelete={handleDelete}
-                            />
-                        )}
-                </Grid>
-            </Grid>
-
-            <TaskDialog
-                open={dialogOpen}
-                projectId={projectId!}
-                task={selectedTask}
-                onClose={() => {
-                    setDialogOpen(false);
-                    setSelectedTask(null);
-                }}
+                subtitle="Every task across your projects"
             />
 
-            <DeleteTaskDialog
-                open={deleteOpen}
-                taskTitle={
-                    taskToDelete?.title ?? ""
-                }
-                loading={
-                    deleteMutation.isPending
-                }
-                onClose={() =>
-                    setDeleteOpen(false)
-                }
-                onConfirm={confirmDelete}
-            />
+            {isPending && <AppLoader />}
+
+            {isError && (
+                <EmptyState message="Unable to load your tasks." />
+            )}
+
+            {!isPending && !isError && tasks.length === 0 && (
+                <EmptyState message="No tasks yet. Add one from within a project." />
+            )}
+
+            {!isPending && !isError && tasks.length > 0 && (
+                <DataTable<MyTask>
+                    rows={tasks}
+                    columns={[
+                        {
+                            header: "Task",
+                            render: (task) => (
+                                <Link
+                                    component="button"
+                                    onClick={() => navigate(`/tasks/${task.id}`)}
+                                    sx={{ textAlign: "left" }}
+                                >
+                                    {task.title}
+                                </Link>
+                            )
+                        },
+                        {
+                            header: "Project",
+                            render: (task) => (
+                                <Link
+                                    component="button"
+                                    onClick={() => navigate(`/projects/${task.projectId}`)}
+                                    sx={{ textAlign: "left" }}
+                                >
+                                    {task.projectName}
+                                </Link>
+                            )
+                        },
+                        {
+                            header: "Status",
+                            render: (task) => (
+                                <Chip
+                                    size="small"
+                                    label={WorkTaskStatusInfo[task.status].label}
+                                    color={WorkTaskStatusInfo[task.status].color}
+                                />
+                            )
+                        },
+                        {
+                            header: "Priority",
+                            render: (task) => (
+                                <Chip
+                                    size="small"
+                                    label={TaskPriorityInfo[task.priority].label}
+                                    color={TaskPriorityInfo[task.priority].color}
+                                />
+                            )
+                        },
+                        {
+                            header: "Assignee",
+                            render: (task) => (
+                                <Typography variant="body2">
+                                    {task.assigneeName ?? "Unassigned"}
+                                </Typography>
+                            )
+                        },
+                        {
+                            header: "Due Date",
+                            render: (task) => (
+                                <Typography variant="body2">
+                                    {task.dueDateUtc
+                                        ? new Date(task.dueDateUtc).toLocaleDateString()
+                                        : "—"}
+                                </Typography>
+                            )
+                        }
+                    ]}
+                />
+            )}
         </PageContainer>
     );
 }

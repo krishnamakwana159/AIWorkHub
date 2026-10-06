@@ -24,7 +24,9 @@ public sealed class NotificationsController(ISender sender)
                 new GetNotificationsQuery(),
                 cancellationToken);
 
-        return Ok(result);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
     }
 
     [HttpGet("unread-count")]
@@ -36,7 +38,9 @@ public sealed class NotificationsController(ISender sender)
                 new GetUnreadNotificationCountQuery(),
                 cancellationToken);
 
-        return Ok(result);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
     }
 
     [HttpPut("{id:guid}/read")]
@@ -49,7 +53,7 @@ public sealed class NotificationsController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
         return NoContent();
     }
@@ -63,7 +67,7 @@ public sealed class NotificationsController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
         return NoContent();
     }
@@ -78,7 +82,7 @@ public sealed class NotificationsController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
         return NoContent();
     }

@@ -5,6 +5,21 @@ namespace AIWorkHub.Application.Interfaces.Repositories;
 
 public interface IWorkTaskRepository : IRepository<WorkTask>
 {
+    Task<WorkTask?> GetByIdWithAssigneeAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<List<WorkTask>> GetAllTasksWithProjectAsync(
+        CancellationToken cancellationToken);
+
+    Task<List<WorkTask>> GetByProjectIdsWithDueDateAsync(
+        List<Guid> projectIds,
+        CancellationToken cancellationToken = default);
+
+    Task<List<WorkTask>> GetByProjectIdsAsync(
+        List<Guid> projectIds,
+        CancellationToken cancellationToken = default);
+
     Task<bool> WorkTaskExistsAsync(
         Guid projectId,
         string title,

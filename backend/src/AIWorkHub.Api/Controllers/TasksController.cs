@@ -1,6 +1,8 @@
 using AIWorkHub.Application.Common.Models;
 using AIWorkHub.Application.Features.Kanban.GetBoard;
 using AIWorkHub.Application.Features.Kanban.MoveTask;
+using AIWorkHub.Application.Features.Tags.AddTagToTask;
+using AIWorkHub.Application.Features.Tags.RemoveTagFromTask;
 using AIWorkHub.Application.Features.Tasks.Assign;
 using AIWorkHub.Application.Features.Tasks.Attachments.Delete;
 using AIWorkHub.Application.Features.Tasks.Attachments.Download;
@@ -15,6 +17,8 @@ using AIWorkHub.Application.Features.Tasks.CreateTask;
 using AIWorkHub.Application.Features.Tasks.DeleteTask;
 using AIWorkHub.Application.Features.Tasks.DTOs;
 using AIWorkHub.Application.Features.Tasks.GetAllTasks;
+using AIWorkHub.Application.Features.Tasks.GetCalendarTasks;
+using AIWorkHub.Application.Features.Tasks.GetMyTasks;
 using AIWorkHub.Application.Features.Tasks.GetTaskById;
 using AIWorkHub.Application.Features.Tasks.UpdateFavorite;
 using AIWorkHub.Application.Features.Tasks.UpdatePin;
@@ -44,6 +48,32 @@ public sealed class TasksController(ISender sender) : ControllerBase
             return BadRequest(result);
 
         return Ok(result);
+    }
+
+    [HttpGet("calendar")]
+    public async Task<IActionResult> GetCalendarTasks(
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetCalendarTasksQuery(),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
+    }
+
+    [HttpGet("mine")]
+    public async Task<IActionResult> GetMyTasks(
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new GetMyTasksQuery(),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
     }
 
     [HttpGet]
@@ -326,6 +356,36 @@ public sealed class TasksController(ISender sender) : ControllerBase
         return result.IsSuccess
             ? Ok(result)
             : BadRequest(result);
+    }
+
+    [HttpPost("{taskId:guid}/tags/{tagId:guid}")]
+    public async Task<IActionResult> AddTag(
+        Guid taskId,
+        Guid tagId,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new AddTagToTaskCommand(taskId, tagId),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? NoContent()
+            : BadRequest(result.Errors);
+    }
+
+    [HttpDelete("{taskId:guid}/tags/{tagId:guid}")]
+    public async Task<IActionResult> RemoveTag(
+        Guid taskId,
+        Guid tagId,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new RemoveTagFromTaskCommand(taskId, tagId),
+            cancellationToken);
+
+        return result.IsSuccess
+            ? NoContent()
+            : BadRequest(result.Errors);
     }
 
 

@@ -38,10 +38,10 @@ public sealed class GetProjectReportQueryHandler(
                 x.Status == WorkTaskStatus.InProgress),
 
             ReviewTasks = tasks.Count(x =>
-                x.Status == WorkTaskStatus.Review),
+                x.Status == WorkTaskStatus.InReview),
 
             DoneTasks = tasks.Count(x =>
-                x.Status == WorkTaskStatus.Done),
+                x.Status == WorkTaskStatus.Completed),
 
             EstimatedHours = tasks.Sum(x =>
                 x.EstimatedHours),
@@ -51,14 +51,14 @@ public sealed class GetProjectReportQueryHandler(
 
             OverdueTasks = tasks.Count(x =>
                 x.DueDateUtc < DateTime.UtcNow &&
-                x.Status != WorkTaskStatus.Done),
+                x.Status != WorkTaskStatus.Completed),
 
             CompletionPercentage =
                 tasks.Count == 0
                 ? 0
                 : Math.Round(
                     tasks.Count(x =>
-                        x.Status == WorkTaskStatus.Done)
+                        x.Status == WorkTaskStatus.Completed)
                     * 100m
                     / tasks.Count,
                     2)

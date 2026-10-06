@@ -32,7 +32,7 @@ public sealed class ReportsController
             new GetDashboardAnalyticsQuery(),
             cancellationToken);
 
-        return result.IsSuccess ? Ok(result) : BadRequest(result);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Errors);
     }
 
     [HttpGet("project/{projectId:guid}")]
@@ -45,9 +45,9 @@ public sealed class ReportsController
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpGet("user/{userId:guid}")]
@@ -60,9 +60,9 @@ public sealed class ReportsController
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     // Excel endpoint for dashboard analytics
@@ -75,9 +75,9 @@ public sealed class ReportsController
             new GetDashboardAnalyticsQuery(),
             cancellationToken);
 
-        if (result.IsFailure)
+        if (result.IsFailure || result.Value == null)
         {
-            return BadRequest(result);
+            return BadRequest(result.Errors ?? new[] { "Dashboard data is null." });
         }
 
         var bytes = await _exportService.ExportDashboardExcelAsync(
@@ -91,7 +91,7 @@ public sealed class ReportsController
     }
 
     // CSV endpoint for dashboard analytics
-    
+
     [HttpGet("dashboard-analytics/export/csv")]
     public async Task<IActionResult> ExportDashboardCsv(
         CancellationToken cancellationToken)
@@ -100,9 +100,9 @@ public sealed class ReportsController
             new GetDashboardAnalyticsQuery(),
             cancellationToken);
 
-        if (result.IsFailure)
+        if (result.IsFailure || result.Value == null)
         {
-            return BadRequest(result);
+            return BadRequest(result.Errors ?? new[] { "Dashboard data is null." });
         }
 
         var bytes = await _exportService.ExportDashboardCsvAsync(

@@ -14,4 +14,9 @@ public interface ICurrentUserService
     /// Gets a value indicating whether the current request is authenticated.
     /// </summary>
     bool IsAuthenticated { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the current user has the Administrator role.
+    /// </summary>
+    bool IsAdministrator { get; }
 }

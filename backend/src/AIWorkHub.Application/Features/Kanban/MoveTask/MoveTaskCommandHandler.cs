@@ -1,3 +1,4 @@
+using AIWorkHub.Application.Common.Interfaces;
 using AIWorkHub.Application.Interfaces.Repositories;
 using AIWorkHub.SharedKernel.Interfaces;
 using AIWorkHub.SharedKernel.Results;
@@ -7,6 +8,9 @@ namespace AIWorkHub.Application.Features.Kanban.MoveTask;
 
 public sealed class MoveTaskCommandHandler(
     IWorkTaskRepository repository,
+    IProjectRepository projectRepository,
+    IProjectMemberRepository projectMemberRepository,
+    ICurrentUserService currentUser,
     IUnitOfWork unitOfWork)
     : IRequestHandler<MoveTaskCommand, Result>
 {
@@ -14,12 +18,38 @@ public sealed class MoveTaskCommandHandler(
         MoveTaskCommand request,
         CancellationToken cancellationToken)
     {
+        if (!Guid.TryParse(currentUser.UserId, out var userId))
+            return Result.Failure("Unauthorized.");
+
         var task = await repository.GetByIdAsync(
             request.TaskId,
             cancellationToken);
 
         if (task is null)
             return Result.Failure("Task not found.");
+
+        if (task.ProjectId != request.Request.ProjectId)
+            return Result.Failure("Task does not belong to the specified project.");
+
+        if (!currentUser.IsAdministrator)
+        {
+            var project = await projectRepository.GetByIdAsync(
+                request.Request.ProjectId,
+                cancellationToken);
+
+            if (project is null)
+                return Result.Failure("Project not found.");
+
+            var isOwner = project.OwnerId == userId;
+
+            var isMember = !isOwner && await projectMemberRepository.ExistsAsync(
+                request.Request.ProjectId,
+                userId,
+                cancellationToken);
+
+            if (!isOwner && !isMember)
+                return Result.Failure("You do not have access to this project.");
+        }
 
         var oldStatus = task.Status;
 

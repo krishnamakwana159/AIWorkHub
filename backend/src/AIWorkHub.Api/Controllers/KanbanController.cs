@@ -4,6 +4,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+namespace AIWorkHub.Api.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/kanban")]
@@ -20,9 +22,9 @@ public sealed class KanbanController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpPatch("tasks/{taskId:guid}/move")]
@@ -36,8 +38,8 @@ public sealed class KanbanController(ISender sender)
             cancellationToken);
 
         if (result.IsFailure)
-            return BadRequest(result);
+            return BadRequest(result.Errors);
 
-        return Ok(result);
+        return NoContent();
     }
 }

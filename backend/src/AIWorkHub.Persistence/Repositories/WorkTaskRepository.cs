@@ -8,6 +8,60 @@ namespace AIWorkHub.Persistence.Repositories;
 public sealed class WorkTaskRepository(AppDbContext dbContext)
     : RepositoryBase<WorkTask>(dbContext), IWorkTaskRepository
 {
+    public async Task<WorkTask?> GetByIdWithAssigneeAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .Include(x => x.AssignedUser)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    }
+
+    public async Task<List<WorkTask>> GetAllTasksWithProjectAsync(
+        CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .AsNoTracking()
+            .Include(x => x.AssignedUser)
+            .Include(x => x.Project)
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<WorkTask>> GetByProjectIdsWithDueDateAsync(
+        List<Guid> projectIds,
+        CancellationToken cancellationToken = default)
+    {
+        if (projectIds.Count == 0)
+            return new List<WorkTask>();
+
+        return await DbSet
+            .AsNoTracking()
+            .Include(x => x.AssignedUser)
+            .Include(x => x.Project)
+            .Where(x =>
+                projectIds.Contains(x.ProjectId) &&
+                x.DueDateUtc != null)
+            .OrderBy(x => x.DueDateUtc)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<WorkTask>> GetByProjectIdsAsync(
+        List<Guid> projectIds,
+        CancellationToken cancellationToken = default)
+    {
+        if (projectIds.Count == 0)
+            return new List<WorkTask>();
+
+        return await DbSet
+            .AsNoTracking()
+            .Include(x => x.AssignedUser)
+            .Include(x => x.Project)
+            .Where(x => projectIds.Contains(x.ProjectId))
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> WorkTaskExistsAsync(
         Guid projectId,
         string title,

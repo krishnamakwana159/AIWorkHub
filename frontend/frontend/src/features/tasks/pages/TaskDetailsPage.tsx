@@ -9,6 +9,7 @@ import EmptyState from "@/components/ui/EmptyState";
 import TaskHeader from "../components/TaskHeader";
 import TaskOverviewCard from "../components/TaskOverviewCard";
 import TaskStatisticsCard from "../components/TaskStatisticsCard";
+import TaskTimerCard from "../components/TaskTimerCard";
 import TaskDialog from "../components/TaskDialog";
 
 import { useTask } from "../hooks/useTask";
@@ -59,6 +60,12 @@ export default function TaskDetailsPage() {
                 <Grid size={12}>
                     <TaskStatisticsCard
                         task={task}
+                  />
+                </Grid>
+
+                <Grid size={12}>
+                    <TaskTimerCard
+                        taskId={task.id}
                     />
                 </Grid>
 

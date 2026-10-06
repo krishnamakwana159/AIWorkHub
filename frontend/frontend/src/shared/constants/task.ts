@@ -1,8 +1,8 @@
 export const TaskPriority = {
-    Low: 0,
-    Medium: 1,
-    High: 2,
-    Critical: 3
+    Low: 1,
+    Medium: 2,
+    High: 3,
+    Critical: 4
 } as const;
 
 export type TaskPriority =
@@ -33,11 +33,11 @@ export const TaskPriorityInfo = {
 } as const;
 
 export const WorkTaskStatus = {
-    Todo: 0,
-    InProgress: 1,
-    InReview: 2,
-    Completed: 3,
-    Cancelled: 4
+    Todo: 1,
+    InProgress: 2,
+    InReview: 3,
+    Completed: 4,
+    Cancelled: 5
 } as const;
 
 export type WorkTaskStatus =

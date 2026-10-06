@@ -25,6 +25,11 @@ public sealed class JwtTokenGenerator(
             new(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
         };
 
+        claims.AddRange(
+            user.UserRoles
+                .Where(x => x.Role is not null)
+                .Select(x => new Claim(ClaimTypes.Role, x.Role.Name)));
+
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_settings.SecretKey));
 

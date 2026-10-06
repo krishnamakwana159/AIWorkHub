@@ -12,9 +12,12 @@ public sealed class UserRepository(AppDbContext dbContext)
         string email,
         CancellationToken cancellationToken = default)
     {
-        return await DbSet.FirstOrDefaultAsync(
-            x => x.Email == email,
-            cancellationToken);
+        return await DbSet
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .FirstOrDefaultAsync(
+                x => x.Email == email,
+                cancellationToken);
     }
 
     public async Task<bool> ExistsByEmailAsync(
@@ -43,5 +46,15 @@ public sealed class UserRepository(AppDbContext dbContext)
         return await DbSet
             .Include(x => x.AssignedTasks)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<User?> GetByIdWithRolesAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
     }
 }

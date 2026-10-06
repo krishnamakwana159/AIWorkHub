@@ -1,0 +1,41 @@
+using AIWorkHub.Application.Features.Users.DTOs;
+using AIWorkHub.Application.Interfaces.Repositories;
+using AIWorkHub.SharedKernel.Interfaces;
+using AIWorkHub.SharedKernel.Results;
+using MediatR;
+
+namespace AIWorkHub.Application.Features.Users.UpdateMyProfile;
+
+public sealed class UpdateMyProfileCommandHandler(
+    IUserRepository repository,
+    ICurrentUserService currentUser,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<UpdateMyProfileCommand, Result<UserProfileResponse>>
+{
+    public async Task<Result<UserProfileResponse>> Handle(
+        UpdateMyProfileCommand request,
+        CancellationToken cancellationToken)
+    {
+        if (!Guid.TryParse(currentUser.UserId, out var userId))
+            return Result<UserProfileResponse>.Failure("Unauthorized.");
+
+        var user = await repository.GetByIdAsync(userId, cancellationToken);
+
+        if (user is null)
+            return Result<UserProfileResponse>.Failure("User not found.");
+
+        user.FirstName = request.Request.FirstName;
+        user.LastName = request.Request.LastName;
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result<UserProfileResponse>.Success(new UserProfileResponse
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            CreatedAtUtc = user.CreatedAtUtc
+        });
+    }
+}

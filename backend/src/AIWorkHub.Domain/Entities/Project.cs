@@ -33,5 +33,5 @@ public sealed class Project : SoftDeleteEntity
 
     public ICollection<WorkTask> Tasks { get; set; } = new List<WorkTask>();
     public ICollection<ProjectMember> Members { get; set; } = new List<ProjectMember>();
-
+    public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }

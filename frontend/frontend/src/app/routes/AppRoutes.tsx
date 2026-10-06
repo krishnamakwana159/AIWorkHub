@@ -12,6 +12,7 @@ import LoginPage from "@/features/auth/pages/LoginPage";
 import ProjectsPage from "@/features/projects/pages/ProjectsPage";
 
 import TasksPage from "@/features/tasks/pages/TasksPage";
+import CalendarPage from "@/features/tasks/pages/CalendarPage";
 import ReportsPage from "@/features/reports/pages/ReportsPage";
 import NotificationsPage from "@/features/notifications/pages/NotificationsPage";
 import AIPage from "@/features/ai/pages/AIPage";
@@ -86,13 +87,16 @@ export default function AppRoutes() {
                               path="activity"
                               element={<ProjectActivityPage />}
                           />
-
-
                         </Route>
 
                         <Route
                             path="/tasks"
                             element={<TasksPage />}
+                        />
+
+                        <Route
+                            path="/calendar"
+                            element={<CalendarPage />}
                         />
 
                         <Route

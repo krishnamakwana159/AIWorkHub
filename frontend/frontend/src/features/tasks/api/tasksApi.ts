@@ -2,11 +2,26 @@ import apiClient from "@/shared/api/apiClient";
 import type { CreateTaskRequest, UpdateTaskRequest } from "../types/task";
 import type { TaskQuery } from "../types/taskQuery";
 import type { TaskAttachment } from "../types/attachment";
+import type { CalendarTask } from "../types/calendarTask";
+import type { MyTask } from "../types/myTask";
 import type {
   CreateCommentRequest,
   TaskComment,
   UpdateCommentRequest,
 } from "../types/comment";
+import type { ProjectRole } from "@/shared/constants/project";
+
+export async function getCalendarTasks() {
+  const { data } = await apiClient.get<CalendarTask[]>("/tasks/calendar");
+
+  return data;
+}
+
+export async function getMyTasks() {
+  const { data } = await apiClient.get<MyTask[]>("/tasks/mine");
+
+  return data;
+}
 
 export async function getTasks(query: TaskQuery) {
   const { data } = await apiClient.get("/tasks", {
@@ -103,3 +118,25 @@ export async function assignTask(id: string, userId: string) {
     userId,
   });
 }
+
+export async function updateProjectMemberRole(
+    projectId: string,
+    userId: string,
+    role: ProjectRole
+) {
+    await apiClient.put(
+        `/projects/${projectId}/members/${userId}/role`,
+        { role }
+    );
+}
+
+export async function removeProjectMember(
+    projectId: string,
+    userId: string
+) {
+    await apiClient.delete(
+        `/projects/${projectId}/members/${userId}`
+    );
+}
+
+

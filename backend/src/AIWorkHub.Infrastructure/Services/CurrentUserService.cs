@@ -25,4 +25,8 @@ public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor)
 
     /// <inheritdoc />
     public bool IsAuthenticated => httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true;
+
+    /// <inheritdoc />
+    public bool IsAdministrator =>
+        httpContextAccessor.HttpContext?.User.IsInRole(ApplicationRoles.Administrator) == true;
 }

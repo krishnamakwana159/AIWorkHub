@@ -7,6 +7,7 @@ import { useUploadAttachment } from "../hooks/useUploadAttachment";
 import { useDeleteAttachment } from "../hooks/useDeleteAttachment";
 
 import { downloadAttachment } from "../api/tasksApi";
+import type { TaskAttachment } from "../types/attachment";
 
 type Props = {
   taskId: string;
@@ -26,23 +27,34 @@ export default function AttachmentsSection({ taskId }: Props) {
       taskId,
       file,
     });
+
+    e.target.value = "";
   }
 
-  async function download(id: string) {
-    const response = await downloadAttachment(id);
+  async function download(attachment: TaskAttachment) {
+    const response = await downloadAttachment(attachment.id);
     const url = window.URL.createObjectURL(response.data);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "";
+    a.download = attachment.fileName;
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  function handleDelete(id: string) {
+    deleteMutation.mutate(id);
   }
 
   return (
     <Stack spacing={3}>
       <Typography variant="h6">Attachments</Typography>
 
-      <Button component="label" variant="contained">
+      <Button
+        component="label"
+        variant="contained"
+        disabled={uploadMutation.isPending}
+        sx={{ alignSelf: "flex-start" }}
+      >
         Upload
         <input hidden type="file" onChange={upload} />
       </Button>
@@ -52,7 +64,7 @@ export default function AttachmentsSection({ taskId }: Props) {
           key={file.id}
           attachment={file}
           onDownload={download}
-          onDelete={(id: any) => deleteMutation.mutate(id)}
+          onDelete={handleDelete}
         />
       ))}
     </Stack>

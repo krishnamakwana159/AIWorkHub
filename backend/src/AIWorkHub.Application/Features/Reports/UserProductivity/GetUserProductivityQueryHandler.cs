@@ -26,7 +26,7 @@ public sealed class GetUserProductivityQueryHandler(
         var tasks = user.AssignedTasks;
 
         var completed = tasks.Count(x =>
-            x.Status == WorkTaskStatus.Done);
+            x.Status == WorkTaskStatus.Completed);
 
         var assigned = tasks.Count;
 
@@ -75,11 +75,11 @@ public sealed class GetUserProductivityQueryHandler(
                 x.Status == WorkTaskStatus.InProgress),
 
             ReviewTasks = tasks.Count(x =>
-                x.Status == WorkTaskStatus.Review),
+                x.Status == WorkTaskStatus.InReview),
 
             OverdueTasks = tasks.Count(x =>
                 x.DueDateUtc < DateTime.UtcNow &&
-                x.Status != WorkTaskStatus.Done),
+                x.Status != WorkTaskStatus.Completed),
 
             EstimatedHours = estimatedHours,
 

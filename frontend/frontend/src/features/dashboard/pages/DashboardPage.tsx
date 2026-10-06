@@ -1,4 +1,5 @@
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 
 import PageContainer from "../../../components/common/PageContainer";
 import PageTitle from "../../../components/common/PageTitle";
@@ -6,6 +7,11 @@ import PageTitle from "../../../components/common/PageTitle";
 import StatCard from "../../../components/ui/StatCard";
 import AppLoader from "../../../components/ui/AppLoader";
 import EmptyState from "../../../components/ui/EmptyState";
+
+import MonthlyTrendChart from "@/components/charts/MonthlyTrendChart";
+import ProjectProgressChart from "@/components/charts/ProjectProgressChart";
+import TeamPerformanceChart from "@/components/charts/TeamPerformanceChart";
+import TopPerformersList from "@/components/charts/TopPerformersList";
 
 import { useDashboardAnalytics } from "../hooks/useDashboardAnalytics";
 
@@ -106,6 +112,22 @@ export default function DashboardPage() {
                     />
                 </Grid>
             </Grid>
+
+            <Stack spacing={3} sx={{ mt: 3 }}>
+                <MonthlyTrendChart data={data.monthlyTrend} />
+
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, lg: 7 }}>
+                        <ProjectProgressChart data={data.projectProgress} />
+                    </Grid>
+
+                    <Grid size={{ xs: 12, lg: 5 }}>
+                        <TopPerformersList data={data.topPerformers} />
+                    </Grid>
+                </Grid>
+
+                <TeamPerformanceChart data={data.teamPerformance} />
+            </Stack>
 
         </PageContainer>
     );

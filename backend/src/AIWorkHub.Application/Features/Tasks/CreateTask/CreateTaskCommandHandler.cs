@@ -14,6 +14,8 @@ namespace AIWorkHub.Application.Features.Tasks.CreateTask;
 public sealed class CreateTaskCommandHandler(
     IWorkTaskRepository taskRepository,
     IProjectRepository projectRepository,
+    IProjectMemberRepository projectMemberRepository,
+    ICurrentUserService currentUser,
     IUnitOfWork unitOfWork,
     IActivityService activityService,
     IRealtimeService realtimeService,
@@ -24,8 +26,29 @@ public sealed class CreateTaskCommandHandler(
         CreateTaskCommand request,
         CancellationToken cancellationToken)
     {
-        if (!await projectRepository.ExistsAsync(request.Request.ProjectId, cancellationToken))
+        if (!Guid.TryParse(currentUser.UserId, out var userId))
+            return Result<TaskResponse>.Failure("Unauthorized.");
+
+        var project = await projectRepository.GetByIdAsync(
+            request.Request.ProjectId,
+            cancellationToken);
+
+        if (project is null)
             return Result<TaskResponse>.Failure("Project not found.");
+
+        if (!currentUser.IsAdministrator)
+        {
+            var isOwner = project.OwnerId == userId;
+
+            var isMember = !isOwner && await projectMemberRepository.ExistsAsync(
+                request.Request.ProjectId,
+                userId,
+                cancellationToken);
+
+            if (!isOwner && !isMember)
+                return Result<TaskResponse>.Failure(
+                    "You do not have access to this project.");
+        }
 
         if (await taskRepository.WorkTaskExistsAsync(
                 request.Request.ProjectId,

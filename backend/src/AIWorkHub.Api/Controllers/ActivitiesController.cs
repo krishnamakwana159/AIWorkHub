@@ -20,6 +20,8 @@ public sealed class ActivitiesController(ISender sender)
             new GetActivitiesQuery(entityId),
             cancellationToken);
 
-        return Ok(result);
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(result.Errors);
     }
 }

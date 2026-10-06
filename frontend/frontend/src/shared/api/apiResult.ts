@@ -5,8 +5,17 @@ export type ApiResult<T> = {
     errors?: string[];
 };
 
+function isApiResultWrapper<T>(data: unknown): data is ApiResult<T> {
+    return (
+        typeof data === "object" &&
+        data !== null &&
+        "value" in data &&
+        ("isSuccess" in data || "isFailure" in data)
+    );
+}
+
 export function unwrapApiResult<T>(data: T | ApiResult<T>): T {
-    if (typeof data === "object" && data !== null && "value" in data) {
+    if (isApiResultWrapper<T>(data)) {
         if (data.value === undefined || data.value === null) {
             throw new Error("API response did not include a value.");
         }
@@ -14,5 +23,5 @@ export function unwrapApiResult<T>(data: T | ApiResult<T>): T {
         return data.value;
     }
 
-    return data;
+    return data as T;
 }

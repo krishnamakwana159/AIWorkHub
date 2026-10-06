@@ -5,5 +5,6 @@ export interface Activity {
     action: number;
     description: string;
     userId?: string;
+    userName?: string;
     createdAtUtc: string;
 }
